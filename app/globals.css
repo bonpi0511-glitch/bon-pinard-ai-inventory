@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body { background:#faf7f2; color:#241c15; }
+.card { @apply rounded-2xl bg-white border border-stone-200 shadow-sm; }
+.input { @apply rounded-xl border border-stone-300 px-3 py-2 bg-white text-sm; }
+.btn { @apply rounded-xl px-4 py-2 font-semibold disabled:opacity-50; }
+.btn-primary { @apply bg-stone-900 text-white; }
+.btn-secondary { @apply bg-stone-100 text-stone-900; }
+.btn-danger { @apply bg-red-800 text-white; }
+th,td { @apply border-b border-stone-200 px-2 py-2 text-sm align-top; }
+th { @apply bg-stone-100 text-left whitespace-nowrap sticky top-0 z-10; }

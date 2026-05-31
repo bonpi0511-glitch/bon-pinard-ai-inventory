@@ -1,0 +1,37 @@
+BON PINARD AI Inventory PWA版
+
+この版は iPhone / iPad のホーム画面に追加できるPWA対応版です。
+
+追加済み:
+- manifest.json
+- Service Worker
+- Apple Web App meta tags
+- BON PINARDアイコン
+- オフライン案内ページ
+- ホーム画面追加案内
+
+重要:
+iPhone/iPadで使うには、PCの localhost ではなく、インターネット上の公開URLが必要です。
+おすすめは Vercel で公開する方法です。
+
+Windowsでローカル確認:
+1. .env.local に OpenAI API Key を設定
+2. npm install
+3. npm run dev
+4. http://localhost:3000 を開く
+
+iPhone/iPadで使う公開手順:
+1. GitHubアカウントを作成
+2. Vercelアカウントを作成
+3. このフォルダをGitHubへアップロード
+4. Vercelで Import Project
+5. Environment Variables に以下を設定
+   OPENAI_API_KEY
+   OPENAI_VISION_MODEL=gpt-4.1
+6. Deploy
+7. 発行されたURLをiPhone/iPadのSafariで開く
+8. 共有 → ホーム画面に追加
+
+注意:
+- APIキーはiPhone/iPadに入れず、VercelのEnvironment Variablesに設定します。
+- AI解析にはインターネット接続が必要です。

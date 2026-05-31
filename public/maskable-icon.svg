@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#241c15"/>
+<circle cx="256" cy="150" r="58" fill="#faf7f2"/>
+<path d="M222 210h68v138c0 48-24 79-51 93v25h57v30H164v-30h57v-25c-27-14-51-45-51-93V210h36v138c0 38 20 62 50 62s50-24 50-62V210h-84z" fill="#faf7f2"/>
+<text x="256" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#faf7f2">BP</text>
+</svg>
