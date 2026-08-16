@@ -9,3 +9,6 @@ test-supabase.mjs
 set-admin-password.mjs
 app/page-backup.tsx
 import { createClient } from @supab.txt
+# Local safety backups
+app/inventory-app.backup.tsx
+inventory-app-backup.txt
