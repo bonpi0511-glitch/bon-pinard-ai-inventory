@@ -474,18 +474,34 @@ alert(
       });
 
       setInventory((prev) => {
-        const duplicateWarnings = findDuplicateWarnings(prev, newItems);
-        const merged = [...prev, ...newItems];
-        setTimeout(() => {
-          localStorage.setItem("bon_pinard_ai_inventory_server", JSON.stringify({
-            header: { supplier: nextSupplier, customer: nextCustomer, invoiceNo: nextInvoiceNo, invoiceDate: nextInvoiceDate },
-            inventory: merged
-          }));
-          saveMastersFromInventory(newItems);
-          if (duplicateWarnings.length) setWarnings([...(parsed.warnings || []), ...duplicateWarnings]);
-        }, 0);
-        return merged;
-      });
+  const duplicateWarnings = findDuplicateWarnings(prev, newItems);
+
+  setTimeout(() => {
+    localStorage.setItem(
+      "bon_pinard_ai_inventory_server",
+      JSON.stringify({
+        header: {
+          supplier: nextSupplier,
+          customer: nextCustomer,
+          invoiceNo: nextInvoiceNo,
+          invoiceDate: nextInvoiceDate,
+        },
+        inventory: newItems,
+      })
+    );
+
+    saveMastersFromInventory(newItems);
+
+    if (duplicateWarnings.length) {
+      setWarnings([
+        ...(parsed.warnings || []),
+        ...duplicateWarnings,
+      ]);
+    }
+  }, 0);
+
+  return newItems;
+});
       setStatus(`${newItems.length}件の商品を在庫へ自動登録しました。内容を確認してください。`);
     } catch (e: any) {
       setStatus(`エラー: ${e.message}`);
