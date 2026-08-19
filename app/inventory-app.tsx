@@ -394,13 +394,35 @@ for (const r of inventory) {
     .from("purchase_items")
     .insert(purchaseItems);
 
-  if (itemsError) {
-    console.error("purchase_items保存失敗", itemsError);
-    alert("商品明細の保存に失敗しました。");
-    return;
-  }
+ if (itemsError) {
+  console.error("purchase_items保存失敗", itemsError);
+  alert("商品明細の保存に失敗しました。");
+  return;
+}
 
-  console.log("Supabase保存成功:", {
+// 在庫移動を登録
+const stockMovements = inventory.map((r, index) => ({
+  company_id: companyId,
+  wine_id: wineIds[index],
+  invoice_id: invoiceId,
+  movement_type: "PURCHASE",
+  quantity: Number(r.qty || 0),
+  unit_cost_ht: Number(r.unit || 0),
+  movement_date: invoiceDate || today(),
+  notes: `Purchase invoice ${invoiceNo || ""}`,
+}));
+
+const { error: movementError } = await supabase
+  .from("stock_movements")
+  .insert(stockMovements);
+
+if (movementError) {
+  console.error("stock_movements保存失敗", movementError);
+  alert("入庫履歴の保存に失敗しました。");
+  return;
+}
+
+console.log("Supabase保存成功:", {
   invoiceId,
   items: purchaseItems.length,
 });
