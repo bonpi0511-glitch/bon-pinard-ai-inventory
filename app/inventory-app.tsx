@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "../lib/supabase";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 
@@ -132,6 +133,84 @@ export default function Page() {
     }
   }, []);
 
+async function loadCloudInventory() {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("ログインユーザー取得失敗", userError);
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("company_id")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile?.company_id) {
+    console.error("company_id取得失敗", profileError);
+    return;
+  }
+
+  console.log("Supabase company_id:", profile.company_id);
+
+  const { data: cloudInventory, error: inventoryError } = await supabase
+    .from("inventory_view")
+    .select("*")
+    .eq("company_id", profile.company_id);
+
+  if (inventoryError) {
+    console.error("Supabase在庫取得失敗", inventoryError);
+    return;
+  }
+
+  console.log("Supabase inventory_view:", cloudInventory);
+
+  if (!cloudInventory || cloudInventory.length === 0) {
+    console.log("Supabase在庫は0件です");
+    return;
+  }
+
+  const convertedInventory: Item[] = cloudInventory.map((r: any) => ({
+    status: "CONFIRMED",
+    date: r.last_movement_date || today(),
+    invoiceNo: "",
+    supplier: "",
+    customer: "BON PINARD SAS",
+
+    producer: r.producer || "",
+    cuvee: r.cuvee || "",
+    raw: r.wine_name || "",
+    color: r.color || "",
+    vintage: r.vintage || "",
+    size: Number(r.bottle_size_cl || 75),
+    alcohol: r.alcohol_percent || "",
+
+    qty: Number(r.current_quantity || 0),
+    unit: Number(r.avg_cost_ht || 0),
+    amount:
+      Math.round(
+        Number(r.current_quantity || 0) *
+          Number(r.avg_cost_ht || 0) *
+          100
+      ) / 100,
+
+    confidence: 1,
+    memo: "Supabase",
+  }));
+
+  console.log("変換後クラウド在庫:", convertedInventory);
+
+  setInventory(convertedInventory);
+}
+
+useEffect(() => {
+  loadCloudInventory();
+}, []);
+
   function handleFiles(selectedFiles: File[]) {
     previews.forEach((p) => URL.revokeObjectURL(p.url));
     const nextPreviews = selectedFiles.map((file) => ({
@@ -150,6 +229,188 @@ export default function Page() {
     if (show) alert("保存しました。マスター履歴も更新しました。");
   }
 
+async function saveInvoiceToSupabase() {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    alert("ログインユーザーを取得できませんでした。");
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("company_id")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || !profile?.company_id) {
+    console.error("company_id取得失敗", profileError);
+    alert("会社情報を取得できませんでした。");
+    return;
+  }
+
+  const companyId = profile.company_id;
+
+  const totalHT = inventory.reduce(
+    (sum, r) => sum + Number(r.amount || 0),
+    0
+  );
+
+  // すでに同じ伝票番号があるか確認
+  const { data: existingInvoices, error: existingError } = await supabase
+    .from("purchase_invoices")
+    .select("id")
+    .eq("company_id", companyId)
+    .eq("invoice_no", invoiceNo)
+    .limit(1);
+
+  if (existingError) {
+    console.error("既存伝票確認失敗", existingError);
+    alert("既存伝票の確認に失敗しました。");
+    return;
+  }
+
+  let invoiceId: string;
+
+  if (existingInvoices && existingInvoices.length > 0) {
+    invoiceId = existingInvoices[0].id;
+    console.log("既存のpurchase_invoiceを使用:", invoiceId);
+  } else {
+    const { data: invoice, error: invoiceError } = await supabase
+      .from("purchase_invoices")
+      .insert({
+        company_id: companyId,
+        supplier_id: null,
+        invoice_no: invoiceNo || null,
+        invoice_date: invoiceDate || null,
+        currency: "EUR",
+        shipping_ht: 0,
+        total_ht: totalHT,
+        tva: 0,
+        total_ttc: totalHT,
+        ai_status: "CONFIRMED",
+      })
+      .select("id")
+      .single();
+
+    if (invoiceError || !invoice) {
+      console.error("purchase_invoices保存失敗", invoiceError);
+      alert("Supabaseへの伝票保存に失敗しました。");
+      return;
+    }
+
+    invoiceId = invoice.id;
+  }
+
+  // 同じ伝票に明細がすでに保存されていないか確認
+  const { data: existingItems, error: itemCheckError } = await supabase
+    .from("purchase_items")
+    .select("id")
+    .eq("invoice_id", invoiceId)
+    .limit(1);
+
+  if (itemCheckError) {
+    console.error("purchase_items確認失敗", itemCheckError);
+    alert("明細の確認に失敗しました。");
+    return;
+  }
+
+  if (existingItems && existingItems.length > 0) {
+    alert("この伝票の明細はすでにSupabaseに保存されています。");
+    return;
+  }
+
+const wineIds: string[] = [];
+
+for (const r of inventory) {
+  const producerName = (r.producer || "UNKNOWN PRODUCER").trim();
+  const wineName = (r.raw || r.cuvee || "UNKNOWN WINE").trim();
+  const vintageValue = (r.vintage || "").trim();
+  const bottleSize = Number(r.size || 75);
+
+  const { data: existingWines, error: wineSearchError } = await supabase
+    .from("wines")
+    .select("id")
+    .eq("company_id", companyId)
+    .eq("producer", producerName)
+    .eq("wine_name", wineName)
+    .eq("vintage", vintageValue)
+    .eq("bottle_size_cl", bottleSize)
+    .limit(1);
+
+  if (wineSearchError) {
+    console.error("ワインマスター検索失敗", wineSearchError);
+    alert("ワインマスターの検索に失敗しました。");
+    return;
+  }
+
+  let wineId: string;
+
+  if (existingWines && existingWines.length > 0) {
+    wineId = existingWines[0].id;
+  } else {
+    const { data: newWine, error: wineInsertError } = await supabase
+      .from("wines")
+      .insert({
+        company_id: companyId,
+        producer: producerName,
+        wine_name: wineName,
+        cuvee: r.cuvee || null,
+        color: r.color || null,
+        vintage: vintageValue || null,
+        bottle_size_cl: bottleSize,
+        alcohol_percent: r.alcohol || null,
+      })
+      .select("id")
+      .single();
+
+    if (wineInsertError || !newWine) {
+      console.error("ワインマスター登録失敗", wineInsertError);
+      alert("ワインマスターへの登録に失敗しました。");
+      return;
+    }
+
+    wineId = newWine.id;
+  }
+
+  wineIds.push(wineId);
+}
+  const purchaseItems = inventory.map((r, index) => ({
+    company_id: companyId,
+    invoice_id: invoiceId,
+    wine_id: wineIds[index],
+    raw_name: r.raw || r.cuvee || "",
+    quantity: Number(r.qty || 0),
+    unit_price_ht: Number(r.unit || 0),
+    amount_ht: Number(r.amount || 0),
+    confidence: Number(r.confidence || 0),
+    notes: r.memo || null,
+  }));
+
+  const { error: itemsError } = await supabase
+    .from("purchase_items")
+    .insert(purchaseItems);
+
+  if (itemsError) {
+    console.error("purchase_items保存失敗", itemsError);
+    alert("商品明細の保存に失敗しました。");
+    return;
+  }
+
+  console.log("Supabase保存成功:", {
+  invoiceId,
+  items: purchaseItems.length,
+});
+
+await loadCloudInventory();
+
+alert(
+  `Supabaseへ保存しました。\n伝票：${invoiceNo}\n商品明細：${purchaseItems.length}件`
+);
+}
   async function analyze() {
     if (!files.length) { alert("PDFまたは写真を選択してください"); return; }
     setLoading(true);
@@ -365,6 +626,12 @@ export default function Page() {
               <button className="btn btn-secondary" onClick={exportCSV}>CSV出力</button>
               <button className="btn btn-secondary" onClick={exportMasters}>マスター出力</button>
               <button className="btn btn-secondary" onClick={() => saveLocal(true)}>端末保存</button>
+              <button
+  className="btn btn-primary"
+  onClick={saveInvoiceToSupabase}
+>
+  Supabaseへ保存
+</button>
               <button className="btn btn-danger" onClick={() => { if (confirm("在庫を全消去しますか？")) setInventory([]); }}>在庫全消去</button>
             </div>
 
