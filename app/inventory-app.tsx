@@ -632,7 +632,7 @@ alert(
                 {previews.map((p, idx) => (
                   <button key={`${p.name}-${idx}`} type="button" className={`shrink-0 rounded-xl border px-3 py-2 text-left text-xs ${selectedPreview?.url === p.url ? "border-stone-900 bg-white font-bold" : "border-stone-200 bg-white"}`} onClick={() => setSelectedPreview(p)}>
                     <div className="max-w-[180px] truncate">{p.name}</div>
-                    <div className="text-[11px] text-stone-500">{p.type.includes("pdf") ? "PDF" : "写真/画像"}</div>
+                    <div className="!text-[11px] text-stone-500">{p.type.includes("pdf") ? "PDF" : "写真/画像"}</div>
                   </button>
                 ))}
               </div>
@@ -673,34 +673,220 @@ alert(
               <button className="btn btn-danger" onClick={() => { if (confirm("在庫を全消去しますか？")) setInventory([]); }}>在庫全消去</button>
             </div>
 
-            <div className="mt-4 max-h-[720px] overflow-auto rounded-xl border border-stone-200">
-              <table className="min-w-[1900px] w-full">
-                <thead><tr>{["状態","操作","入庫日","伝票番号","仕入先","生産者","キュヴェ","商品名原文","色","年","容量","度数","本数","単価HT","金額HT","信頼度","メモ"].map((h) => <th key={h}>{h}</th>)}</tr></thead>
-                <tbody>
-                  {inventory.map((r, i) => (
-                    <tr key={i} className={r.status === "NEEDS_CHECK" ? "bg-amber-50" : ""}>
-                      <td><select className="input w-[110px]" value={r.status} onChange={(e) => update(i, "status", e.target.value as StatusCode)}><option value="CONFIRMED">確認済</option><option value="NEEDS_CHECK">要確認</option><option value="MANUAL">手入力</option></select></td>
-                      <td><button className="btn btn-danger" onClick={() => removeRow(i)}>削除</button></td>
-                      <td><input className="input w-[130px]" type="date" value={r.date} onChange={(e) => update(i, "date", e.target.value)} /></td>
-                      <td><input className="input w-[140px]" value={r.invoiceNo} onChange={(e) => update(i, "invoiceNo", e.target.value)} /></td>
-                      <td><input className="input w-[220px]" value={r.supplier} onChange={(e) => update(i, "supplier", e.target.value)} /></td>
-                      <td><input className="input w-[220px]" value={r.producer} onChange={(e) => update(i, "producer", e.target.value)} /></td>
-                      <td><input className="input w-[320px]" value={r.cuvee} onChange={(e) => update(i, "cuvee", e.target.value)} /></td>
-                      <td><input className="input w-[520px]" value={r.raw} onChange={(e) => update(i, "raw", e.target.value)} /></td>
-                      <td><input className="input w-[110px]" value={r.color} onChange={(e) => update(i, "color", e.target.value)} /></td>
-                      <td><input className="input w-[90px]" value={r.vintage} onChange={(e) => update(i, "vintage", e.target.value)} /></td>
-                      <td><input className="input w-[80px]" type="number" value={r.size} onChange={(e) => update(i, "size", e.target.value)} /></td>
-                      <td><input className="input w-[90px]" value={r.alcohol} onChange={(e) => update(i, "alcohol", e.target.value)} /></td>
-                      <td><input className="input w-[80px]" type="number" value={r.qty} onChange={(e) => update(i, "qty", e.target.value)} /></td>
-                      <td><input className="input w-[100px]" type="number" value={r.unit} onChange={(e) => update(i, "unit", e.target.value)} /></td>
-                      <td><input className="input w-[100px]" type="number" value={r.amount} onChange={(e) => update(i, "amount", e.target.value)} /></td>
-                      <td><input className="input w-[80px]" type="number" min="0" max="1" step="0.01" value={r.confidence} onChange={(e) => update(i, "confidence", e.target.value)} /></td>
-                      <td><input className="input w-[300px]" value={r.memo} onChange={(e) => update(i, "memo", e.target.value)} /></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="mt-3 max-h-[520px] overflow-y-auto rounded-xl border border-stone-200 bg-white">
+  {inventory.length === 0 ? (
+    <div className="p-6 text-center text-sm text-stone-500">
+      AI抽出結果はまだありません
+    </div>
+  ) : (
+    inventory.map((r, i) => (
+      <div
+        key={i}
+        className={`border-b border-stone-200 p-2 last:border-b-0 ${
+          r.status === "NEEDS_CHECK" ? "bg-amber-50" : ""
+        }`}
+      >
+        {/* 1段目：伝票情報 */}
+        <div className="grid grid-cols-12 gap-2 items-end">
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              状態
             </div>
+            <select
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.status}
+              onChange={(e) =>
+                update(i, "status", e.target.value as StatusCode)
+              }
+            >
+              <option value="CONFIRMED">確認済</option>
+              <option value="NEEDS_CHECK">要確認</option>
+              <option value="MANUAL">手入力</option>
+            </select>
+          </label>
+
+          <div className="col-span-1">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              操作
+            </div>
+            <button
+              className="btn btn-danger !h-8 !px-2 !py-1 text-xs w-full"
+              onClick={() => removeRow(i)}
+            >
+              削除
+            </button>
+          </div>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              入庫日
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              type="date"
+              value={r.date}
+              onChange={(e) => update(i, "date", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              伝票番号
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.invoiceNo}
+              onChange={(e) => update(i, "invoiceNo", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-5">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              仕入先
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.supplier}
+              onChange={(e) => update(i, "supplier", e.target.value)}
+            />
+          </label>
+        </div>
+
+        {/* 2段目：ワイン名 */}
+        <div className="mt-2 grid grid-cols-12 gap-2 items-end">
+          <label className="col-span-4">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              生産者
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.producer}
+              onChange={(e) => update(i, "producer", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-5">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              キュヴェ
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.cuvee}
+              onChange={(e) => update(i, "cuvee", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              商品名原文
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.raw}
+              onChange={(e) => update(i, "raw", e.target.value)}
+            />
+          </label>
+        </div>
+
+        {/* 3段目：数量・価格など */}
+        <div className="mt-2 grid grid-cols-12 gap-2 items-end">
+          <label className="col-span-1">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              色
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.color}
+              onChange={(e) => update(i, "color", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              年
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.vintage}
+              onChange={(e) => update(i, "vintage", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              容量
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              type="number"
+              value={r.size}
+              onChange={(e) => update(i, "size", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-1">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              度数
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.alcohol}
+              onChange={(e) => update(i, "alcohol", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-1">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              本数
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              type="number"
+              value={r.qty}
+              onChange={(e) => update(i, "qty", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              単価HT
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              type="number"
+              value={r.unit}
+              onChange={(e) => update(i, "unit", e.target.value)}
+            />
+          </label>
+
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              金額HT
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              type="number"
+              value={r.amount}
+              onChange={(e) => update(i, "amount", e.target.value)}
+            />
+          </label>
+
+          
+          <label className="col-span-2">
+            <div className="mb-1 text-[9px] font-semibold text-stone-500">
+              メモ
+            </div>
+            <input
+              className="input !h-8 !px-2 !py-1 text-xs w-full"
+              value={r.memo}
+              onChange={(e) => update(i, "memo", e.target.value)}
+            />
+          </label>
+        </div>
+      </div>
+    ))
+  )}
+</div>
           </div>
         </div>
       </section>
