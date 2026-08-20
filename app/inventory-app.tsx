@@ -113,6 +113,8 @@ export default function Page() {
   const [invoiceNo, setInvoiceNo] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(today());
   const [inventory, setInventory] = useState<Item[]>([]);
+  const [allInventory, setAllInventory] = useState<Item[]>([]);
+  const [inventorySearch, setInventorySearch] = useState("");
   const [warnings, setWarnings] = useState<string[]>([]);
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
@@ -158,9 +160,10 @@ async function loadCloudInventory() {
   console.log("Supabase company_id:", profile.company_id);
 
   const { data: cloudInventory, error: inventoryError } = await supabase
-    .from("inventory_view")
-    .select("*")
-    .eq("company_id", profile.company_id);
+  .from("inventory_view")
+  .select("*")
+  .eq("company_id", profile.company_id)
+  .neq("current_quantity", 0);
 
   if (inventoryError) {
     console.error("Supabase在庫取得失敗", inventoryError);
@@ -170,9 +173,10 @@ async function loadCloudInventory() {
   console.log("Supabase inventory_view:", cloudInventory);
 
   if (!cloudInventory || cloudInventory.length === 0) {
-    console.log("Supabase在庫は0件です");
-    return;
-  }
+  console.log("Supabase在庫は0件です");
+  setAllInventory([]);
+  return;
+}
 
   const convertedInventory: Item[] = cloudInventory.map((r: any) => ({
     status: "CONFIRMED",
@@ -204,7 +208,7 @@ async function loadCloudInventory() {
 
   console.log("変換後クラウド在庫:", convertedInventory);
 
-  setInventory(convertedInventory);
+  setAllInventory(convertedInventory);
 }
 
 useEffect(() => {
@@ -570,6 +574,37 @@ alert(
   const totalQty = inventory.reduce((s, r) => s + Number(r.qty || 0), 0);
   const totalHT = inventory.reduce((s, r) => s + Number(r.amount || 0), 0);
   const needsCheck = inventory.filter((r) => r.status === "NEEDS_CHECK").length;
+  const allInventoryQty = allInventory.reduce(
+  (s, r) => s + Number(r.qty || 0),
+  0
+);
+
+const allInventoryHT = allInventory.reduce(
+  (s, r) =>
+    s + Number(r.qty || 0) * Number(r.unit || 0),
+  0
+);
+const inventorySearchText = inventorySearch.trim().toLowerCase();
+
+const filteredAllInventory = allInventory
+  .filter((r) => {
+    if (!inventorySearchText) return true;
+
+    return [
+      r.producer,
+      r.cuvee,
+      r.raw,
+      r.vintage,
+      r.color,
+    ].some((v) =>
+      String(v || "").toLowerCase().includes(inventorySearchText)
+    );
+  })
+  .sort((a, b) =>
+    `${a.producer} ${a.cuvee} ${a.vintage}`.localeCompare(
+      `${b.producer} ${b.cuvee} ${b.vintage}`
+    )
+  );
 
   return (
     <main className="mx-auto max-w-[1800px] p-4">
@@ -670,7 +705,17 @@ alert(
 >
   Supabaseへ保存
 </button>
-              <button className="btn btn-danger" onClick={() => { if (confirm("在庫を全消去しますか？")) setInventory([]); }}>在庫全消去</button>
+              <button
+  className="btn btn-danger"
+  onClick={() => {
+    if (confirm("AI抽出結果をクリアしますか？")) {
+      setInventory([]);
+      localStorage.removeItem("bon_pinard_ai_inventory_server");
+    }
+  }}
+>
+  AI結果クリア
+</button>
             </div>
 
             <div className="mt-3 max-h-[520px] overflow-y-auto rounded-xl border border-stone-200 bg-white">
@@ -689,9 +734,9 @@ alert(
         {/* 1段目：伝票情報 */}
         <div className="grid grid-cols-12 gap-2 items-end">
           <label className="col-span-2">
-            <div className="mb-1 text-[9px] font-semibold text-stone-500">
-              状態
-            </div>
+  <div className="mb-1 text-[9px] font-semibold text-stone-500">
+    状態
+  </div>
             <select
               className="input !h-8 !px-2 !py-1 text-xs w-full"
               value={r.status}
@@ -776,7 +821,7 @@ alert(
             />
           </label>
 
-          <label className="col-span-2">
+          <label className="col-span-3">
             <div className="mb-1 text-[9px] font-semibold text-stone-500">
               商品名原文
             </div>
@@ -812,7 +857,7 @@ alert(
             />
           </label>
 
-          <label className="col-span-2">
+          <label className="col-span-1">
             <div className="mb-1 text-[9px] font-semibold text-stone-500">
               容量
             </div>
@@ -890,6 +935,109 @@ alert(
           </div>
         </div>
       </section>
+          <section className="card mt-4 p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-bold">4. 全在庫一覧</h2>
+            <p className="mt-1 text-sm text-stone-600">
+              Supabaseに保存されている現在庫
+            </p>
+          </div>
+
+          <button
+            className="btn btn-secondary"
+            onClick={loadCloudInventory}
+          >
+            在庫を更新
+          </button>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="rounded-xl bg-stone-50 p-4">
+            ワイン種類
+            <br />
+            <b className="text-2xl">{allInventory.length}</b>
+          </div>
+
+          <div className="rounded-xl bg-stone-50 p-4">
+            現在庫本数
+            <br />
+            <b className="text-2xl">{allInventoryQty}</b>
+          </div>
+
+          <div className="rounded-xl bg-stone-50 p-4">
+            在庫原価HT
+            <br />
+            <b className="text-2xl">{allInventoryHT.toFixed(2)} €</b>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <input
+            className="input w-full"
+            placeholder="生産者・キュヴェ・ヴィンテージ・色で検索"
+            value={inventorySearch}
+            onChange={(e) => setInventorySearch(e.target.value)}
+          />
+        </div>
+
+        <div className="mt-2 text-xs text-stone-500">
+          表示 {filteredAllInventory.length} / {allInventory.length} 種類
+        </div>
+
+        <div className="mt-3 max-h-[700px] overflow-y-auto rounded-xl border border-stone-200 bg-white">
+          <div className="sticky top-0 z-10 grid grid-cols-12 gap-2 border-b border-stone-200 bg-stone-100 px-3 py-2 text-[10px] font-bold text-stone-600">
+            <div className="col-span-3">生産者</div>
+            <div className="col-span-4">キュヴェ / ワイン名</div>
+            <div className="col-span-1">年</div>
+            <div className="col-span-1">色</div>
+            <div className="col-span-1">容量</div>
+            <div className="col-span-1 text-right">本数</div>
+            <div className="col-span-1 text-right">原価HT</div>
+          </div>
+
+          {filteredAllInventory.length === 0 ? (
+            <div className="p-6 text-center text-sm text-stone-500">
+              該当する在庫がありません
+            </div>
+          ) : (
+            filteredAllInventory.map((r, i) => (
+              <div
+                key={`${r.producer}-${r.cuvee}-${r.vintage}-${r.size}-${i}`}
+                className="grid grid-cols-12 gap-2 border-b border-stone-100 px-3 py-2 text-[11px] last:border-b-0"
+              >
+                <div className="col-span-3 truncate font-semibold">
+                  {r.producer}
+                </div>
+
+                <div className="col-span-4 truncate" title={r.raw || r.cuvee}>
+                  {r.cuvee || r.raw}
+                </div>
+
+                <div className="col-span-1">
+                  {r.vintage}
+                </div>
+
+                <div className="col-span-1">
+                  {r.color}
+                </div>
+
+                <div className="col-span-1">
+                  {r.size} cl
+                </div>
+
+                <div className="col-span-1 text-right font-bold">
+                  {r.qty}
+                </div>
+
+                <div className="col-span-1 text-right">
+                  {r.unit.toFixed(2)}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section> 
     </main>
   );
 }
