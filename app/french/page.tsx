@@ -16,12 +16,15 @@ type Message =
 
 type VocabPair = { fr: string; ja: string };
 
+type GrammarPoint = { title: string; explanation_ja: string; examples: string[] };
+
 type MaterialEntry = {
   id: string;
   addedAt: string;
   label: string;
   preview: string;
   vocabulary: VocabPair[];
+  grammarPoints: GrammarPoint[];
 };
 
 const LEVEL_OPTIONS: { value: Level; label: string }[] = [
@@ -53,7 +56,7 @@ export default function FrenchPracticePage() {
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrError, setOcrError] = useState("");
   const [vocabBank, setVocabBank] = useState<MaterialEntry[]>([]);
-  const [vocabLoading, setVocabLoading] = useState(false);
+  const [bankLoading, setBankLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,27 +79,38 @@ export default function FrenchPracticePage() {
 
   async function addToVocabBank(text: string, label: string) {
     if (!text.trim()) return;
-    setVocabLoading(true);
+    setBankLoading(true);
     try {
-      const res = await fetch("/api/french-vocab", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "ボキャブラリー抽出に失敗しました");
+      const [vocabRes, grammarRes] = await Promise.all([
+        fetch("/api/french-vocab", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        }),
+        fetch("/api/french-grammar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        }),
+      ]);
+      const vocabData = await vocabRes.json();
+      if (!vocabRes.ok) throw new Error(vocabData.error || "ボキャブラリー抽出に失敗しました");
+      const grammarData = await grammarRes.json();
+      if (!grammarRes.ok) throw new Error(grammarData.error || "文法解説の抽出に失敗しました");
+
       const entry: MaterialEntry = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         addedAt: new Date().toISOString(),
         label,
         preview: text.trim().slice(0, 80),
-        vocabulary: data.vocabulary || [],
+        vocabulary: vocabData.vocabulary || [],
+        grammarPoints: grammarData.grammarPoints || [],
       };
       saveBank([...vocabBank, entry]);
     } catch (e: any) {
       setOcrError(e.message);
     } finally {
-      setVocabLoading(false);
+      setBankLoading(false);
     }
   }
 
@@ -123,6 +137,21 @@ export default function FrenchPracticePage() {
     const seen = new Set<string>();
     vocabBank.forEach((e) => e.vocabulary.forEach((v) => seen.add(v.fr.trim().toLowerCase())));
     return seen.size;
+  }, [vocabBank]);
+
+  // Most recent materials first, deduped by grammar point title.
+  const accumulatedGrammar = useMemo(() => {
+    const seen = new Set<string>();
+    const out: GrammarPoint[] = [];
+    for (let i = vocabBank.length - 1; i >= 0; i--) {
+      for (const g of vocabBank[i].grammarPoints) {
+        const key = g.title.trim().toLowerCase();
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        out.push(g);
+      }
+    }
+    return out.slice(0, 20);
   }, [vocabBank]);
 
   function readFileAsText(file: File) {
@@ -196,6 +225,7 @@ export default function FrenchPracticePage() {
         history: historyForApi(),
         userMessage,
         vocabularyBank: accumulatedVocab,
+        grammarNotes: accumulatedGrammar.map((g) => `${g.title}: ${g.explanation_ja}`),
       }),
     });
     const data = await res.json();
@@ -298,7 +328,7 @@ export default function FrenchPracticePage() {
           onChange={(e) => handleFiles(e.target.files)}
         />
         {ocrLoading && <p className="mt-1 text-xs text-stone-500">写真から文字を読み取っています...</p>}
-        {vocabLoading && <p className="mt-1 text-xs text-stone-500">ボキャブラリーを抽出してバンクに追加しています...</p>}
+        {bankLoading && <p className="mt-1 text-xs text-stone-500">ボキャブラリーと文法解説を抽出してバンクに追加しています...</p>}
         {fileName && !ocrLoading && <p className="mt-1 text-xs text-stone-500">読み込み済み: {fileName}</p>}
         {ocrError && (
           <div className="mt-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
@@ -316,7 +346,7 @@ export default function FrenchPracticePage() {
         <div className="mt-2">
           <button
             className="btn btn-secondary text-xs"
-            disabled={vocabLoading || !sourceText.trim()}
+            disabled={bankLoading || !sourceText.trim()}
             onClick={() => addToVocabBank(sourceText, "手入力テキスト")}
           >
             このテキストをボキャブラリーバンクに保存
@@ -407,6 +437,31 @@ export default function FrenchPracticePage() {
                   )}
                 </div>
               ))}
+          </div>
+        </section>
+      )}
+
+      {accumulatedGrammar.length > 0 && (
+        <section className="card mt-4 p-5">
+          <h2 className="text-xl font-bold">📖 文法解説（日本語）</h2>
+          <p className="mt-1 text-sm text-stone-600">
+            アップロードした教材の文法解説欄（Grammaire など）を、AIが日本語でわかりやすく解説したものです。会話中の添削もこの内容を踏まえて説明されます。
+          </p>
+
+          <div className="mt-3 space-y-3">
+            {accumulatedGrammar.map((g, i) => (
+              <div key={i} className="rounded-xl border border-stone-200 bg-white p-3">
+                <div className="text-sm font-bold text-stone-800">{g.title}</div>
+                <p className="mt-1 text-sm text-stone-700">{g.explanation_ja}</p>
+                {g.examples.length > 0 && (
+                  <ul className="mt-2 list-disc pl-5 text-xs text-stone-500">
+                    {g.examples.map((ex, j) => (
+                      <li key={j}>{ex}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
           </div>
         </section>
       )}

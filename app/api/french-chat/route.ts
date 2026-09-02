@@ -25,6 +25,7 @@ const RequestBody = z.object({
   history: z.array(HistoryItem).max(30).default([]),
   userMessage: z.string().max(2000).optional(),
   vocabularyBank: z.array(z.string()).max(300).default([]),
+  grammarNotes: z.array(z.string()).max(50).default([]),
 });
 
 const ChatTurn = z.object({
@@ -69,6 +70,7 @@ export async function POST(req: NextRequest) {
 - userMessage が無い最初のターンでは、correction_fr と correction_note_ja は必ず null にし、教材テキストの内容に基づいた自然な会話の切り出し（挨拶＋質問など）を reply に入れる。
 - 難しい語彙を使う場合は、reply の中で simple に言い換えるか短く補足してもよい。
 - 「これまで学習した語彙」が渡されている場合、それは過去にアップロードした教材から蓄積された復習用のリストです。今日の教材の話題を壊さない範囲で、レベルに合ったものを1〜2個ほど自然に会話に混ぜて復習の機会を作ってください（無理に全部使う必要はありません）。
+- 「これまでの文法解説」が渡されている場合、それは教材（教科書の Grammaire 欄など）から抽出した文法ポイントです。correction_note_ja でユーザーの間違いを説明する際、関連する文法解説があればその内容と用語を使って日本語で説明してください（例:「これは名詞の性の一致のルールです。教材にもあった通り…」のように）。関連するものが無ければ通常通り説明してください。
 
 JSON の形式:
 {"reply":"","reply_translation_ja":"","correction_fr":null,"correction_note_ja":null}`;
@@ -79,8 +81,12 @@ JSON の形式:
           .join("\n")}`
       : "";
 
+    const grammarSection = body.grammarNotes.length
+      ? `\n\nこれまでの文法解説（教材から抽出、日本語）:\n${body.grammarNotes.slice(-50).join("\n")}`
+      : "";
+
     const userContent = [
-      `教材テキスト:\n"""\n${body.sourceText.slice(0, 6000)}\n"""${vocabSection}`,
+      `教材テキスト:\n"""\n${body.sourceText.slice(0, 6000)}\n"""${vocabSection}${grammarSection}`,
       body.userMessage
         ? `ユーザーの直近の発言（フランス語）: "${body.userMessage}"`
         : "これは会話の最初のターンです。教材テキストに基づいて会話を切り出してください。",
