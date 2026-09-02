@@ -24,6 +24,7 @@ const RequestBody = z.object({
   level: z.enum(LEVELS).default("beginner"),
   history: z.array(HistoryItem).max(30).default([]),
   userMessage: z.string().max(2000).optional(),
+  vocabularyBank: z.array(z.string()).max(300).default([]),
 });
 
 const ChatTurn = z.object({
@@ -67,12 +68,19 @@ export async function POST(req: NextRequest) {
 - ユーザーからの直近の発言（userMessage）がある場合、文法・語彙・スペルの誤りがあれば correction_fr に自然なフランス語の訂正例を、correction_note_ja に何をどう直したかの短い日本語説明を入れる。誤りがなければ両方 null にする。
 - userMessage が無い最初のターンでは、correction_fr と correction_note_ja は必ず null にし、教材テキストの内容に基づいた自然な会話の切り出し（挨拶＋質問など）を reply に入れる。
 - 難しい語彙を使う場合は、reply の中で simple に言い換えるか短く補足してもよい。
+- 「これまで学習した語彙」が渡されている場合、それは過去にアップロードした教材から蓄積された復習用のリストです。今日の教材の話題を壊さない範囲で、レベルに合ったものを1〜2個ほど自然に会話に混ぜて復習の機会を作ってください（無理に全部使う必要はありません）。
 
 JSON の形式:
 {"reply":"","reply_translation_ja":"","correction_fr":null,"correction_note_ja":null}`;
 
+    const vocabSection = body.vocabularyBank.length
+      ? `\n\nこれまで学習した語彙（復習用、過去にアップロードした教材から蓄積）:\n${body.vocabularyBank
+          .slice(-150)
+          .join("\n")}`
+      : "";
+
     const userContent = [
-      `教材テキスト:\n"""\n${body.sourceText.slice(0, 6000)}\n"""`,
+      `教材テキスト:\n"""\n${body.sourceText.slice(0, 6000)}\n"""${vocabSection}`,
       body.userMessage
         ? `ユーザーの直近の発言（フランス語）: "${body.userMessage}"`
         : "これは会話の最初のターンです。教材テキストに基づいて会話を切り出してください。",
