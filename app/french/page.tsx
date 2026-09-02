@@ -31,6 +31,8 @@ export default function FrenchPracticePage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrError, setOcrError] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,15 +44,52 @@ export default function FrenchPracticePage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  function handleFile(file: File | null) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = String(reader.result || "");
-      setSourceText(text);
-      setFileName(file.name);
-    };
-    reader.readAsText(file, "utf-8");
+  function readFileAsText(file: File) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error || new Error("ファイルの読み込みに失敗しました"));
+      reader.readAsText(file, "utf-8");
+    });
+  }
+
+  async function handleFiles(fileList: FileList | null) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    setOcrError("");
+
+    const textFiles = files.filter((f) => f.type.startsWith("text/") || /\.(txt|md)$/i.test(f.name));
+    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+    const collected: string[] = [];
+
+    if (textFiles.length) {
+      try {
+        const texts = await Promise.all(textFiles.map(readFileAsText));
+        collected.push(...texts);
+      } catch (e: any) {
+        setOcrError(e.message);
+      }
+    }
+
+    if (imageFiles.length) {
+      setOcrLoading(true);
+      try {
+        const fd = new FormData();
+        imageFiles.forEach((f) => fd.append("files", f));
+        const res = await fetch("/api/french-ocr", { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "画像からの文字起こしに失敗しました");
+        if (data.text) collected.push(data.text);
+      } catch (e: any) {
+        setOcrError(e.message);
+      } finally {
+        setOcrLoading(false);
+      }
+    }
+
+    const combined = collected.filter(Boolean).join("\n\n");
+    if (combined) setSourceText(combined);
+    setFileName(files.map((f) => f.name).join(", "));
   }
 
   function historyForApi() {
@@ -161,13 +200,23 @@ export default function FrenchPracticePage() {
 
       <section className="card mt-4 p-5">
         <h2 className="text-xl font-bold">1. 会話の元になるテキストを用意</h2>
+        <p className="mt-1 text-sm text-stone-600">
+          テキストファイル（.txt / .md）、または教科書などのページ写真をアップロードできます。写真はAIが文字を読み取ってテキスト化します。
+        </p>
         <input
           className="input mt-3 w-full"
           type="file"
-          accept=".txt,.md,text/plain"
-          onChange={(e) => handleFile(e.target.files?.[0] || null)}
+          multiple
+          accept="image/*,.txt,.md,text/plain"
+          onChange={(e) => handleFiles(e.target.files)}
         />
-        {fileName && <p className="mt-1 text-xs text-stone-500">読み込み済み: {fileName}</p>}
+        {ocrLoading && <p className="mt-1 text-xs text-stone-500">写真から文字を読み取っています...</p>}
+        {fileName && !ocrLoading && <p className="mt-1 text-xs text-stone-500">読み込み済み: {fileName}</p>}
+        {ocrError && (
+          <div className="mt-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+            エラー: {ocrError}
+          </div>
+        )}
 
         <textarea
           className="input mt-3 w-full"
@@ -193,7 +242,7 @@ export default function FrenchPracticePage() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          <button className="btn btn-primary" disabled={loading} onClick={startConversation}>
+          <button className="btn btn-primary" disabled={loading || ocrLoading} onClick={startConversation}>
             {loading && !started ? "準備中..." : started ? "テキストを変えて再スタート" : "会話を始める"}
           </button>
           {started && (
