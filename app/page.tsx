@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
+import Link from "next/link";
 import { supabase } from "../lib/supabase";
 import InventoryApp from "./inventory-app";
 
@@ -87,6 +88,12 @@ export default function Page() {
 
           <h1 style={{ marginTop: 0 }}>在庫管理ログイン</h1>
 
+          <p style={{ marginTop: -8, marginBottom: 16 }}>
+            <Link href="/french" style={{ fontSize: 14, color: "#171411", textDecoration: "underline" }}>
+              🇫🇷 フランス語 会話練習アプリはこちら
+            </Link>
+          </p>
+
           <p style={{ color: "#666" }}>
             メールアドレスとパスワードを入力してください。
           </p>
@@ -160,8 +167,15 @@ export default function Page() {
           padding: "8px 16px",
           textAlign: "right",
           background: "#f6f2ec",
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: 16,
         }}
       >
+        <Link href="/french" style={{ fontSize: 14, textDecoration: "underline" }}>
+          🇫🇷 フランス語 会話練習
+        </Link>
         <button onClick={logout}>ログアウト</button>
       </div>
 
