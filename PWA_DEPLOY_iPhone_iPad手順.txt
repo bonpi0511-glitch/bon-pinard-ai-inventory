@@ -35,3 +35,10 @@ iPhone/iPadで使う公開手順:
 注意:
 - APIキーはiPhone/iPadに入れず、VercelのEnvironment Variablesに設定します。
 - AI解析にはインターネット接続が必要です。
+
+フランス語会話練習アプリ（/french）を公開する場合:
+- 同じVercelプロジェクトで、Environment Variables に以下も設定します
+  OPENAI_API_KEY
+  OPENAI_VISION_MODEL=gpt-4.1
+  OPENAI_CHAT_MODEL=gpt-4.1
+- 公開URLの末尾に /french を付けて開きます（例: https://xxxx.vercel.app/french）
