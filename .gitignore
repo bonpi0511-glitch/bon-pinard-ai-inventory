@@ -1,14 +1,22 @@
+# dependencies / build output
 node_modules/
 .next/
-.env.local
-.env.admin.local
+tsconfig.tsbuildinfo
 *.log
+
+# deployment
+.vercel/
+
+# environment variables (secrets) - keep only the example file
+.env*
+!.env.example
 
 # local test / temporary files
 test-supabase.mjs
 set-admin-password.mjs
 app/page-backup.tsx
 import { createClient } from @supab.txt
+
 # Local safety backups
 app/inventory-app.backup.tsx
 inventory-app-backup.txt
