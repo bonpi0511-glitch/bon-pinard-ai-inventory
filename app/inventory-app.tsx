@@ -5337,7 +5337,7 @@ function printWineListA4() {
         "Times New Roman",
         "Noto Serif",
         serif;
-      font-size: 9pt;
+      font-size: 12.6pt;
       line-height: 1.14;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -5348,23 +5348,23 @@ function printWineListA4() {
     }
 
     .print-header {
-      margin: 0 0 2.0mm;
-      padding: 0 0 1.3mm;
+      margin: 0 0 2.5mm;
+      padding: 0 0 1.7mm;
       border-bottom: 0.3pt solid #bdb7ae;
       text-align: center;
     }
 
     .print-header h1 {
       margin: 0;
-      font-size: 16pt;
+      font-size: 22.5pt;
       line-height: 0.96;
       font-weight: 700;
       letter-spacing: 0.15em;
     }
 
     .print-header .subtitle {
-      margin-top: 0.55mm;
-      font-size: 8.4pt;
+      margin-top: 0.75mm;
+      font-size: 11.8pt;
       line-height: 1;
       font-style: italic;
       color: #57534e;
@@ -5382,10 +5382,10 @@ function printWineListA4() {
 
     .country-group h2 {
       column-span: all;
-      margin: 0 0 0.8mm;
-      padding: 0.45mm 0 0.45mm;
+      margin: 0 0 1.1mm;
+      padding: 0.65mm 0 0.65mm;
       border-bottom: 0.5pt solid #aaa39b;
-      font-size: 12.5pt;
+      font-size: 20.5pt;
       line-height: 1;
       text-align: center;
       text-transform: uppercase;
@@ -5400,8 +5400,8 @@ function printWineListA4() {
 
     .region-group h3 {
       column-span: all;
-      margin: 0.85mm 0 0.4mm;
-      font-size: 12pt;
+      margin: 1.2mm 0 0.55mm;
+      font-size: 18pt;
       line-height: 1;
       text-align: center;
       font-weight: 700;
@@ -5410,44 +5410,53 @@ function printWineListA4() {
     }
 
     .category-group h4 {
+      /*
+       * 色見出しの字間。欧文(BLANC / ROUGE等)は広めに取り、
+       * 日本語(白 / 赤等)は字間が空きすぎて不自然にならないよう狭める。
+       */
+      --category-letter-spacing: 0.3em;
       column-span: all;
-      margin: 0.4mm 0 0.65mm;
+      margin: 0.55mm 0 1.1mm;
       font-family:
         Arial,
         Helvetica,
         sans-serif;
-      font-size: 8pt;
+      font-size: 13pt;
       line-height: 1;
       font-weight: 700;
       text-align: center;
       text-transform: uppercase;
-      letter-spacing: 0.22em;
+      letter-spacing: var(--category-letter-spacing);
       color: #57534e;
       break-after: avoid;
       page-break-after: avoid;
     }
 
+    html:lang(ja) .category-group h4 {
+      --category-letter-spacing: 0.12em;
+    }
+
     /*
      * h4自体はcolumn-span: allのblockのまま維持し、
-     * 内側のspanだけinline-blockにして文字幅ぶんの細い下線を引く。
+     * 内側のspanだけinline-blockにして文字幅ぶんの下線を引く。
      * padding-leftは末尾のletter-spacing分と釣り合わせ、
      * 下線と文字を中央に揃えるため。
      */
     .category-group h4 span {
       display: inline-block;
-      padding: 0 0 0.35mm 0.22em;
-      border-bottom: 1px solid currentColor;
+      padding: 0 0 0.65mm var(--category-letter-spacing);
+      border-bottom: 1.5px solid currentColor;
     }
 
     .producer-group {
-      margin: 0 0 1.35mm;
+      margin: 0 0 1.9mm;
       break-inside: avoid;
       page-break-inside: avoid;
     }
 
     .producer-group h5 {
-      margin: 0 0 0.35mm;
-      font-size: 9.2pt;
+      margin: 0 0 0.5mm;
+      font-size: 13.3pt;
       line-height: 1.02;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -5457,17 +5466,17 @@ function printWineListA4() {
     .wine-row {
       display: grid;
       grid-template-columns:
-        9mm minmax(0, 1fr) auto;
+        11mm minmax(0, 1fr) auto;
       align-items: baseline;
-      gap: 1.4mm;
-      min-height: 3.8mm;
+      gap: 1.5mm;
+      min-height: 5.3mm;
       margin: 0;
       break-inside: avoid;
       page-break-inside: avoid;
     }
 
     .vintage {
-      font-size: 7.7pt;
+      font-size: 10.8pt;
       color: #78716c;
       text-align: right;
       white-space: nowrap;
@@ -5486,7 +5495,7 @@ function printWineListA4() {
 
     .wine-name {
       min-width: 0;
-      font-size: 8.7pt;
+      font-size: 12.2pt;
       white-space: normal;
     }
 
@@ -5496,22 +5505,22 @@ function printWineListA4() {
     }
 
     .leader {
-      min-width: 5mm;
+      min-width: 4mm;
       flex: 1;
-      border-bottom: 0.35pt dotted #c9c4bd;
-      transform: translateY(-0.8mm);
+      border-bottom: 0.5pt dotted #c9c4bd;
+      transform: translateY(-1.1mm);
     }
 
     .price {
-      font-size: 8.5pt;
+      font-size: 11.9pt;
       font-weight: 600;
       white-space: nowrap;
       text-align: right;
     }
 
     .wine-meta {
-      margin-top: -0.15mm;
-      font-size: 6.2pt;
+      margin-top: -0.2mm;
+      font-size: 8.7pt;
       line-height: 1;
       font-style: italic;
       color: #8a827a;
