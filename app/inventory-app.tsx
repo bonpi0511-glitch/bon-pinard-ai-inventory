@@ -5278,9 +5278,9 @@ function printWineListA4() {
 
               return `
 <section class="category-group">
-  <h4>${escapeHtml(
+  <h4><span>${escapeHtml(
     wineCategoryLabel(category)
-  )}</h4>
+  )}</span></h4>
   ${producerHtml}
 </section>`;
             })
@@ -5401,7 +5401,7 @@ function printWineListA4() {
     .region-group h3 {
       column-span: all;
       margin: 0.85mm 0 0.4mm;
-      font-size: 10.2pt;
+      font-size: 12pt;
       line-height: 1;
       text-align: center;
       font-weight: 700;
@@ -5416,7 +5416,7 @@ function printWineListA4() {
         Arial,
         Helvetica,
         sans-serif;
-      font-size: 6.6pt;
+      font-size: 8pt;
       line-height: 1;
       font-weight: 700;
       text-align: center;
@@ -5425,6 +5425,18 @@ function printWineListA4() {
       color: #57534e;
       break-after: avoid;
       page-break-after: avoid;
+    }
+
+    /*
+     * h4自体はcolumn-span: allのblockのまま維持し、
+     * 内側のspanだけinline-blockにして文字幅ぶんの細い下線を引く。
+     * padding-leftは末尾のletter-spacing分と釣り合わせ、
+     * 下線と文字を中央に揃えるため。
+     */
+    .category-group h4 span {
+      display: inline-block;
+      padding: 0 0 0.35mm 0.22em;
+      border-bottom: 1px solid currentColor;
     }
 
     .producer-group {
