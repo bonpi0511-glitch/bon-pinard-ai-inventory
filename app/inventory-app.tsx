@@ -3627,6 +3627,188 @@ function recommendedSalePriceFromCost(
   };
 }
 
+/*
+ * ワインリストA4印刷：印刷前にコンテンツをA4ページ単位へ事前分割し、
+ * 2ページ目以降の先頭に、そのページで継続している「地域 — 色」を
+ * 小さく再表示する（例：Bourgogne — ROUGE）。
+ *
+ * Chrome/Edgeの印刷CSSにはページごとに内容が変わる running header
+ * （string-set / position: running()）が無いため、印刷ウィンドウ内で
+ * 実際のレイアウトを測って、ページ境界を自前で決める。
+ *
+ * - 測定は印刷と同じ幅（A4 210mm − 左右余白7mm×2 = 196mm）で行い、
+ *   1ページの高さは A4 297mm − 上下余白(7mm + 8mm) から安全マージンを
+ *   引いた値を上限とする。
+ * - 各ページには country / region / category の section を浅く複製して
+ *   入れるので、既存の印刷CSS（.region-group h3 等）はそのまま効く。
+ * - 地域見出し・色見出しは、最初の生産者グループと一緒に置けない場合は
+ *   次ページへ送る（見出しだけがページ下端に残らない）。
+ * - 生産者グループは分割しない。順序も変えない。
+ * - 継続表示：
+ *     色の途中からページが始まる     → 「地域 — 色」
+ *     同じ地域の新しい色から始まる   → 「地域」（直後に色見出しがある）
+ *     新しい地域・国から始まる       → 表示なし
+ *   1ページ目には表示しない。国名・タイトルは繰り返さない。
+ */
+function paginateWineListPrintSheet(doc: Document) {
+  const flow = doc.querySelector<HTMLElement>(".print-columns");
+  const header = doc.querySelector<HTMLElement>(".print-header");
+
+  if (!flow) {
+    return;
+  }
+
+  const probe = doc.createElement("div");
+  probe.style.cssText =
+    "position:absolute;visibility:hidden;width:1px;height:279mm;";
+  doc.body.appendChild(probe);
+  // 282mm（印字可能高さ）から、画面測定と印刷の誤差用に3mm引く
+  const pageLimit = probe.getBoundingClientRect().height;
+  probe.remove();
+
+  const countries = Array.from(
+    flow.querySelectorAll<HTMLElement>(":scope > .country-group")
+  );
+
+  flow.textContent = "";
+
+  let page = doc.createElement("div");
+  let pageHasContent = false;
+
+  const newPage = (continuation?: {
+    region: string;
+    category?: string;
+  }) => {
+    page = doc.createElement("div");
+    page.className = "print-page";
+    flow.appendChild(page);
+    pageHasContent = false;
+
+    if (continuation) {
+      const line = doc.createElement("div");
+      line.className = "print-continuation";
+      line.textContent = continuation.region;
+
+      if (continuation.category) {
+        line.appendChild(doc.createTextNode(" — "));
+        const category = doc.createElement("span");
+        category.className = "print-continuation-category";
+        category.textContent = continuation.category;
+        line.appendChild(category);
+      }
+
+      page.appendChild(line);
+    }
+  };
+
+  const fits = () =>
+    page.getBoundingClientRect().height <= pageLimit;
+
+  newPage();
+
+  if (header) {
+    page.appendChild(header);
+  }
+
+  for (const country of countries) {
+    let countryHeading = country.querySelector<HTMLElement>(
+      ":scope > h2"
+    );
+
+    const regions = Array.from(
+      country.querySelectorAll<HTMLElement>(":scope > .region-group")
+    );
+
+    for (const region of regions) {
+      const regionHeading = region.querySelector<HTMLElement>(
+        ":scope > h3"
+      );
+      const regionName = regionHeading?.textContent?.trim() || "";
+      let firstCategory = true;
+
+      const categories = Array.from(
+        region.querySelectorAll<HTMLElement>(":scope > .category-group")
+      );
+
+      for (const category of categories) {
+        const categoryHeading = category.querySelector<HTMLElement>(
+          ":scope > h4"
+        );
+        const categoryName =
+          categoryHeading?.textContent?.trim() || "";
+        const groups = Array.from(
+          category.querySelectorAll<HTMLElement>(
+            ":scope > .category-columns > .producer-group"
+          )
+        );
+
+        // 見出し（必要なもの）＋ 2段組 を浅い複製のsectionに入れて配置する
+        const placeBlock = (withHeadings: boolean) => {
+          const countrySection = country.cloneNode(false) as HTMLElement;
+          const regionSection = region.cloneNode(false) as HTMLElement;
+          const categorySection = category.cloneNode(false) as HTMLElement;
+          const columns = doc.createElement("div");
+          columns.className = "category-columns";
+
+          if (withHeadings) {
+            if (countryHeading) {
+              countrySection.appendChild(countryHeading);
+            }
+            if (firstCategory && regionHeading) {
+              regionSection.appendChild(regionHeading);
+            }
+            if (categoryHeading) {
+              categorySection.appendChild(categoryHeading);
+            }
+          }
+
+          categorySection.appendChild(columns);
+          regionSection.appendChild(categorySection);
+          countrySection.appendChild(regionSection);
+          page.appendChild(countrySection);
+
+          return { countrySection, columns };
+        };
+
+        // 見出し ＋ 最初の生産者グループは必ず同じページに置く
+        let block = placeBlock(true);
+        if (groups[0]) {
+          block.columns.appendChild(groups[0]);
+        }
+
+        if (!fits() && pageHasContent) {
+          block.countrySection.remove();
+          newPage(
+            firstCategory || countryHeading
+              ? undefined
+              : { region: regionName }
+          );
+          block = placeBlock(true);
+          if (groups[0]) {
+            block.columns.appendChild(groups[0]);
+          }
+        }
+
+        pageHasContent = true;
+        countryHeading = null;
+        firstCategory = false;
+
+        for (const group of groups.slice(1)) {
+          block.columns.appendChild(group);
+
+          if (!fits()) {
+            group.remove();
+            newPage({ region: regionName, category: categoryName });
+            block = placeBlock(false);
+            block.columns.appendChild(group);
+            pageHasContent = true;
+          }
+        }
+      }
+    }
+  }
+}
+
 function wineRegionFromKeywords(text: string): string | null {
   if (isSpiritByName(text)) {
     return null;
@@ -5422,6 +5604,50 @@ function printWineListA4() {
       column-rule: 0.25pt solid #e7e2dc;
     }
 
+    /*
+     * 印刷前に paginateWineListPrintSheet() がA4ページ単位に分割した
+     * ページ。ページ境界は測定済みなので、各ページの後で改ページする。
+     */
+    .print-page {
+      break-after: page;
+      page-break-after: always;
+    }
+
+    .print-page:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+
+    /* 2ページ目以降の先頭：継続中の「地域 — 色」 */
+    .print-continuation {
+      margin: 0 0 1.8mm;
+      padding-top: 0.2mm;
+      font-size: 9.5pt;
+      line-height: 1.1;
+      font-weight: 700;
+      text-align: center;
+      color: #57534e;
+    }
+
+    .print-continuation-category {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    html:lang(ja) .print-continuation-category {
+      letter-spacing: 0.04em;
+    }
+
+    /*
+     * ページ分割の測定は画面表示で行うため、画面でも印刷時と同じ
+     * 印字幅（A4 210mm − 左右余白7mm×2）にしておく。
+     */
+    @media screen {
+      .print-sheet {
+        width: 196mm;
+      }
+    }
+
     .country-group {
       break-inside: auto;
     }
@@ -5614,6 +5840,14 @@ function printWineListA4() {
       }
     } catch {
       // フォント待機に失敗しても印刷自体は続行する
+    }
+
+    try {
+      // フォント確定後のレイアウトでA4ページ単位に分割する
+      paginateWineListPrintSheet(printWindow.document);
+    } catch (error) {
+      // 分割に失敗しても印刷自体は続行する
+      console.error("ワインリスト印刷のページ分割エラー:", error);
     }
 
     printWindow.focus();
