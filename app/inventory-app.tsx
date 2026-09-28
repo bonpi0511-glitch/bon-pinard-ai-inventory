@@ -9070,6 +9070,35 @@ async function fetchCustomerWineListRows(
  *   （country等は空文字、is_listed=false、sale_price=null）を
  *   その場で補うだけ。
  */
+/*
+ * Supabase(PostgREST)は1リクエストあたり既定で最大1000行しか返さない。
+ * 1000行を超えると残りが黙って欠落し、例えばwine_list_settingsの
+ * 既存行を「行なし」と誤判定してしまうため、wine_id順に1000行ずつ
+ * 全ページを取得する。
+ */
+async function selectAllRowsByWineId(
+  buildQuery: () => any
+): Promise<{ data: any[] | null; error: any }> {
+  const pageSize = 1000;
+  const rows: any[] = [];
+
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await buildQuery()
+      .order("wine_id")
+      .range(from, from + pageSize - 1);
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    rows.push(...(data || []));
+
+    if (!data || data.length < pageSize) {
+      return { data: rows, error: null };
+    }
+  }
+}
+
 async function fetchManageWineListRows(
   companyId: string
 ): Promise<WineListRow[]> {
@@ -9078,27 +9107,33 @@ async function fetchManageWineListRows(
     classificationResult,
     settingsResult,
   ] = await Promise.all([
-    supabase
-      .from("inventory_view")
-      .select(
-        "company_id, wine_id, producer, wine_name, cuvee, vintage, bottle_size_cl, current_quantity, avg_cost_ht"
-      )
-      .eq("company_id", companyId)
-      .neq("current_quantity", 0),
+    selectAllRowsByWineId(() =>
+      supabase
+        .from("inventory_view")
+        .select(
+          "company_id, wine_id, producer, wine_name, cuvee, vintage, bottle_size_cl, current_quantity, avg_cost_ht"
+        )
+        .eq("company_id", companyId)
+        .neq("current_quantity", 0)
+    ),
 
-    supabase
-      .from("wine_classification_memory")
-      .select(
-        "company_id, wine_id, country, region, subregion, appellation, climat, cru_level, category"
-      )
-      .eq("company_id", companyId),
+    selectAllRowsByWineId(() =>
+      supabase
+        .from("wine_classification_memory")
+        .select(
+          "company_id, wine_id, country, region, subregion, appellation, climat, cru_level, category"
+        )
+        .eq("company_id", companyId)
+    ),
 
-    supabase
-      .from("wine_list_settings")
-      .select(
-        "company_id, wine_id, sale_price, manual_price, is_listed, notes"
-      )
-      .eq("company_id", companyId),
+    selectAllRowsByWineId(() =>
+      supabase
+        .from("wine_list_settings")
+        .select(
+          "company_id, wine_id, sale_price, manual_price, is_listed, notes"
+        )
+        .eq("company_id", companyId)
+    ),
   ]);
 
   if (inventoryResult.error) {
@@ -9664,12 +9699,12 @@ async function saveWineReviewCandidates() {
  * Section 7「価格未設定」パネルの一括保存。
  *
  * 価格のみを保存し、掲載/非掲載(is_listed)は一切変更しない。
- * - settings行あり：sale_price / manual_price=true / updated_at のみUPDATE
- *   （is_listedは送らない。既存の saveWineListPrice() は分類済みwineの
- *     価格保存時にis_listed=trueにするが、この一括保存では行わない）
- * - settings行なし：is_listed=falseを明示してINSERT
+ * - settings行なし：is_listed=falseを明示して作成（ON CONFLICT DO NOTHING）
  *   （UI上も行なし=非掲載として扱っているため状態は変わらない。
  *     DBのDEFAULT is_listed=trueには依存しない）
+ * - その後、全対象の sale_price / manual_price=true / updated_at のみUPDATE
+ *   （is_listedは送らない。既存の saveWineListPrice() は分類済みwineの
+ *     価格保存時にis_listed=trueにするが、この一括保存では行わない）
  * 成功した行だけwineListのlocal stateへ反映する（再読込は不要）。
  */
 async function saveSelectedWinePrices() {
@@ -9715,12 +9750,52 @@ async function saveSelectedWinePrices() {
   try {
     const now = new Date().toISOString();
 
-    const updates = targets.filter((t) => t.row.hasListSettings);
-    const inserts = targets.filter((t) => !t.row.hasListSettings);
+    /*
+     * 画面上のhasListSettings（読込時点のsettings行有無）には依存しない。
+     * 読込後に別端末で行が作られた場合や、取得漏れがあった場合に
+     * INSERTが既存行と衝突し（wine_list_settings_pkey）、
+     * 一括INSERTごと全件失敗していたため。
+     * 同じwine_idが重複して含まれていても1件として扱う。
+     */
+    const uniqueTargets = Array.from(
+      new Map(
+        targets.map((t) => [t.row.wine_id, t] as const)
+      ).values()
+    );
 
-    for (let i = 0; i < updates.length; i += 10) {
+    /*
+     * 1) 行が無いwineだけ新規作成する（INSERT ... ON CONFLICT DO NOTHING）。
+     *    onConflictを指定せずテーブルの実際の主キーで衝突判定させ、
+     *    既存行は一切変更しない（既存のis_listed・notesは保持）。
+     *    新規行だけ is_listed=false を明示（DBのDEFAULT trueに依存しない）。
+     */
+    const { error: ensureError } = await supabase
+      .from("wine_list_settings")
+      .upsert(
+        uniqueTargets.map(({ row, price }) => ({
+          company_id: row.company_id,
+          wine_id: row.wine_id,
+          sale_price: price,
+          manual_price: true,
+          is_listed: false,
+          notes: null,
+          updated_at: now,
+        })),
+        { ignoreDuplicates: true }
+      );
+
+    if (ensureError) {
+      console.error("販売価格の一括保存: settings行の作成エラー", ensureError);
+    }
+
+    /*
+     * 2) 全対象の価格だけをUPDATEする（is_listedは送らない）。
+     *    既存行の掲載状態はそのまま、1)で作った行も同じ値で上書きされるだけ。
+     *    1件ずつ判定し、失敗・0件更新はその行だけ失敗として数える。
+     */
+    for (let i = 0; i < uniqueTargets.length; i += 10) {
       await Promise.all(
-        updates.slice(i, i + 10).map(async ({ row, price }) => {
+        uniqueTargets.slice(i, i + 10).map(async ({ row, price }) => {
           const { data, error } = await supabase
             .from("wine_list_settings")
             .update({
@@ -9730,52 +9805,26 @@ async function saveSelectedWinePrices() {
             })
             .eq("company_id", row.company_id)
             .eq("wine_id", row.wine_id)
-            .select("sale_price,manual_price,is_listed")
-            .single();
+            .select("sale_price,manual_price,is_listed");
 
-          if (error || !data) {
+          const savedRow = data?.[0];
+
+          if (error || !savedRow) {
             recordError(
-              error || new Error(tUi("salePriceSaveUnavailable"))
+              error ||
+                ensureError ||
+                new Error(tUi("salePriceSaveUnavailable"))
             );
             return;
           }
 
           saved.set(row.wine_id, {
-            sale_price: Number(data.sale_price ?? price),
-            manual_price: Boolean(data.manual_price),
-            is_listed: Boolean(data.is_listed),
+            sale_price: Number(savedRow.sale_price ?? price),
+            manual_price: Boolean(savedRow.manual_price),
+            is_listed: Boolean(savedRow.is_listed),
           });
         })
       );
-    }
-
-    if (inserts.length > 0) {
-      const { data, error } = await supabase
-        .from("wine_list_settings")
-        .insert(
-          inserts.map(({ row, price }) => ({
-            company_id: row.company_id,
-            wine_id: row.wine_id,
-            sale_price: price,
-            manual_price: true,
-            is_listed: false,
-            notes: null,
-            updated_at: now,
-          }))
-        )
-        .select("wine_id,sale_price,manual_price,is_listed");
-
-      if (error) {
-        inserts.forEach(() => recordError(error));
-      } else {
-        (data || []).forEach((d: any) => {
-          saved.set(d.wine_id, {
-            sale_price: Number(d.sale_price),
-            manual_price: Boolean(d.manual_price),
-            is_listed: Boolean(d.is_listed),
-          });
-        });
-      }
     }
 
     if (saved.size > 0) {
