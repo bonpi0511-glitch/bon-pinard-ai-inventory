@@ -9742,6 +9742,39 @@ async function saveWineReviewCandidates() {
 }
 
 /*
+ * wine_list_settings の行が無いwineだけ行を作成する
+ * （INSERT ... ON CONFLICT DO NOTHING）。
+ *
+ * - onConflictを指定せず、テーブルの実際の主キーで衝突判定させる。
+ * - 既存行は一切変更しない（is_listed・sale_price・notes等を保持）。
+ * - 読込時点のhasListSettings（古い可能性がある）に依存せず、
+ *   別端末で同時に行が作られても duplicate key で失敗しない。
+ * - 呼び出し側は、この後に変更したい列だけを company_id + wine_id
+ *   限定でUPDATEし、0件UPDATEを失敗として扱うこと。
+ */
+async function ensureWineListSettingsRows(
+  rows: {
+    company_id: string;
+    wine_id: string;
+    sale_price: number | null;
+    manual_price: boolean;
+    is_listed: boolean;
+  }[],
+  now: string
+) {
+  return supabase
+    .from("wine_list_settings")
+    .upsert(
+      rows.map((row) => ({
+        ...row,
+        notes: null,
+        updated_at: now,
+      })),
+      { ignoreDuplicates: true }
+    );
+}
+
+/*
  * Section 7「価格未設定」パネルの一括保存。
  *
  * 価格のみを保存し、掲載/非掲載(is_listed)は一切変更しない。
@@ -9815,19 +9848,16 @@ async function saveSelectedWinePrices() {
      *    既存行は一切変更しない（既存のis_listed・notesは保持）。
      *    新規行だけ is_listed=false を明示（DBのDEFAULT trueに依存しない）。
      */
-    const { error: ensureError } = await supabase
-      .from("wine_list_settings")
-      .upsert(
+    const { error: ensureError } =
+      await ensureWineListSettingsRows(
         uniqueTargets.map(({ row, price }) => ({
           company_id: row.company_id,
           wine_id: row.wine_id,
           sale_price: price,
           manual_price: true,
           is_listed: false,
-          notes: null,
-          updated_at: now,
         })),
-        { ignoreDuplicates: true }
+        now
       );
 
     if (ensureError) {
@@ -10070,101 +10100,55 @@ async function saveWineListPrice(wineId: string) {
   );
 
   try {
-    let savedRow:
-      | {
-          sale_price: number | null;
-          manual_price: boolean;
-          is_listed: boolean;
-        }
-      | null = null;
+    const now = new Date().toISOString();
 
-    if (row.hasListSettings) {
-      /*
-       * 既存settings行のUPDATE。
-       *
-       * classification済み（hasClassification=true）のwineは、
-       * 価格保存時にis_listed=trueへする既存のBON PINARDの挙動を
-       * そのまま維持する（ここを変えると既存顧客の掲載状態が
-       * 意図せず変わってしまうため）。
-       *
-       * 未分類（hasClassification=false）のwineは、settings行が
-       * 既に存在する場合（＝以前に価格だけ保存してINSERT済みの
-       * ケース）でも、is_listedを絶対にtrueにしない。分類前の
-       * wineが価格保存をきっかけに誤って掲載状態になり、後で
-       * classification行が作られた瞬間にwine_list_view
-       * （INNER JOIN）へ意図せず公開されてしまう事故を防ぐ。
-       */
-      const {
-        data,
-        error: saveError,
-      } = await supabase
-        .from("wine_list_settings")
-        .update({
-          sale_price: roundedPrice,
-          manual_price: true,
-          is_listed: row.hasClassification
-            ? true
-            : false,
-          updated_at:
-            new Date().toISOString(),
-        })
-        .eq(
-          "company_id",
-          row.company_id
-        )
-        .eq(
-          "wine_id",
-          wineId
-        )
-        .select(
-          "sale_price,manual_price,is_listed"
-        )
-        .single();
+    /*
+     * 読込時点のhasListSettingsには依存しない（stale判定で
+     * INSERTが既存行と衝突し wine_list_settings_pkey エラーになるため）。
+     *
+     * 1) 行が無い場合だけ作成（ON CONFLICT DO NOTHING）。
+     *    新規行は従来どおり is_listed=false（DBのDEFAULT trueに依存しない。
+     *    掲載ONは saveWineListListing() で分類チェックを通してから行う）。
+     * 2) 価格だけUPDATE。is_listed・notesは送らないので、既存行の
+     *    掲載状態は価格保存で変わらない。
+     */
+    const { error: ensureError } =
+      await ensureWineListSettingsRows(
+        [
+          {
+            company_id: row.company_id,
+            wine_id: wineId,
+            sale_price: roundedPrice,
+            manual_price: true,
+            is_listed: false,
+          },
+        ],
+        now
+      );
 
-      if (saveError || !data) {
-        throw new Error(
-          saveError?.message ||
-            tUi("salePriceSaveUnavailable")
-        );
-      }
+    const {
+      data,
+      error: saveError,
+    } = await supabase
+      .from("wine_list_settings")
+      .update({
+        sale_price: roundedPrice,
+        manual_price: true,
+        updated_at: now,
+      })
+      .eq("company_id", row.company_id)
+      .eq("wine_id", wineId)
+      .select("sale_price,manual_price,is_listed");
 
-      savedRow = data;
-    } else {
-      /*
-       * settings行がまだ存在しないwine（INITIAL_IMPORT直後等）の
-       * 初回保存。安全のため、価格だけの入力ではis_listedを
-       * falseのまま作成する（DBのDEFAULT is_listed=trueには
-       * 依存しない。掲載ONは別途saveWineListListing()経由で、
-       * classification存在チェックを通してから行う）。
-       */
-      const {
-        data,
-        error: saveError,
-      } = await supabase
-        .from("wine_list_settings")
-        .insert({
-          company_id: row.company_id,
-          wine_id: wineId,
-          sale_price: roundedPrice,
-          manual_price: true,
-          is_listed: false,
-          notes: null,
-          updated_at:
-            new Date().toISOString(),
-        })
-        .select(
-          "sale_price,manual_price,is_listed"
-        )
-        .single();
+    // 0件UPDATE（行を作れず・見えず）も失敗として扱う
+    const savedRow = data?.[0];
 
-      if (saveError || !data) {
-        throw new Error(
-          saveError?.message ||
-            tUi("salePriceSaveUnavailable")
-        );
-      }
-
-      savedRow = data;
+    if (saveError || !savedRow) {
+      throw new Error(
+        saveError?.message ||
+          ensureError?.message ||
+          tUi("salePriceSaveUnavailable")
+      );
     }
 
     const savedPrice =
@@ -10181,11 +10165,11 @@ async function saveWineListPrice(wineId: string) {
               sale_price: savedPrice,
               manual_price:
                 Boolean(
-                  savedRow!.manual_price
+                  savedRow.manual_price
                 ),
               is_listed:
                 Boolean(
-                  savedRow!.is_listed
+                  savedRow.is_listed
                 ),
               hasListSettings: true,
             }
@@ -10280,73 +10264,54 @@ async function saveWineListListing(
   );
 
   try {
-    let savedRow: { is_listed: boolean } | null = null;
+    const now = new Date().toISOString();
 
-    if (row.hasListSettings) {
-      const {
-        data,
-        error: saveError,
-      } = await supabase
-        .from("wine_list_settings")
-        .update({
-          is_listed: nextIsListed,
-          updated_at:
-            new Date().toISOString(),
-        })
-        .eq(
-          "company_id",
-          row.company_id
-        )
-        .eq(
-          "wine_id",
-          wineId
-        )
-        .select("is_listed")
-        .single();
+    /*
+     * 読込時点のhasListSettingsには依存しない（stale判定で
+     * INSERTが既存行と衝突し wine_list_settings_pkey エラーになるため）。
+     *
+     * 1) 行が無い場合だけ最小限の列で作成（ON CONFLICT DO NOTHING）。
+     *    価格なし・manual_price=false・is_listed=false（DBのDEFAULT
+     *    trueに依存しない。掲載状態は直後の2)で設定する）。
+     * 2) is_listed と updated_at だけUPDATE。既存行の sale_price /
+     *    manual_price / notes は送らないので変わらない。
+     */
+    const { error: ensureError } =
+      await ensureWineListSettingsRows(
+        [
+          {
+            company_id: row.company_id,
+            wine_id: wineId,
+            sale_price: null,
+            manual_price: false,
+            is_listed: false,
+          },
+        ],
+        now
+      );
 
-      if (saveError || !data) {
-        throw new Error(
-          saveError?.message ||
-            tUi("listingStateSaveUnavailable")
-        );
-      }
+    const {
+      data,
+      error: saveError,
+    } = await supabase
+      .from("wine_list_settings")
+      .update({
+        is_listed: nextIsListed,
+        updated_at: now,
+      })
+      .eq("company_id", row.company_id)
+      .eq("wine_id", wineId)
+      .select("is_listed");
 
-      savedRow = data;
-    } else {
-      /*
-       * settings行がまだ存在しないwineの初回保存。
-       * ここに到達するのはnextIsListed=falseのケースのみの想定
-       * （nextIsListed=trueは上のlistingNeedsPriceガードで
-       * 必ず先に弾かれるため、settings行未作成のままtrueで
-       * INSERTされることは実質的に起こらない。念のため
-       * is_listedの値はnextIsListedをそのまま使う）。
-       */
-      const {
-        data,
-        error: saveError,
-      } = await supabase
-        .from("wine_list_settings")
-        .insert({
-          company_id: row.company_id,
-          wine_id: wineId,
-          sale_price: null,
-          manual_price: false,
-          is_listed: nextIsListed,
-          notes: null,
-          updated_at:
-            new Date().toISOString(),
-        })
-        .select("is_listed")
-        .single();
+    // 0件UPDATE（行を作れず・見えず）も失敗として扱う
+    const savedRow = data?.[0];
 
-      if (saveError || !data) {
-        throw new Error(
-          saveError?.message ||
-            tUi("listingStateSaveUnavailable")
-        );
-      }
-
-      savedRow = data;
+    if (saveError || !savedRow) {
+      throw new Error(
+        saveError?.message ||
+          ensureError?.message ||
+          tUi("listingStateSaveUnavailable")
+      );
     }
 
     const savedIsListed =
