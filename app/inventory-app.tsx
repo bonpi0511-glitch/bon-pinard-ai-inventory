@@ -4421,8 +4421,12 @@ const [wineListViewMode, setWineListViewMode] =
 const [wineListCategoryFilter, setWineListCategoryFilter] =
   useState<WineListRow["category"] | "ALL">("ALL");
 
-const [wineListRegionFilter, setWineListRegionFilter] =
-  useState("ALL");
+/*
+ * Section 7 地域フィルター（複数選択）。空配列 = 全地域。
+ * 画面表示・PDF印刷の絞り込みだけに使い、DBには書き込まない。
+ */
+const [wineListRegionFilters, setWineListRegionFilters] =
+  useState<string[]>([]);
 
 const [wineListDisplayMode, setWineListDisplayMode] =
   useState<"MANAGE" | "CUSTOMER">("MANAGE");
@@ -5101,15 +5105,37 @@ function printWineListA4() {
    * 1ページあたりの情報量を増やしつつ
    * 生産者・ワイン・価格の対応を読みやすく保つ。
    */
+  /*
+   * 国・地域の並びは、並び替え設定（価格順など）や
+   * 地域ボタンをクリックした順に関係なく、標準の一覧順
+   * （sortedWineList: 国 → 地域）に揃える。
+   * 各地域内の並びは従来どおり rows（表示中の並び替え）に従う。
+   */
+  const countryKey = (row: WineListRow) =>
+    String(row.country || "").trim() || otherLabel;
+
+  const regionKey = (row: WineListRow) =>
+    `${countryKey(row)}\n${
+      String(row.region || "").trim() || otherLabel
+    }`;
+
+  const standardOrder = new Map<string, number>();
+
+  sortedWineList.forEach((row, index) => {
+    [countryKey(row), regionKey(row)].forEach((key) => {
+      if (!standardOrder.has(key)) {
+        standardOrder.set(key, index);
+      }
+    });
+  });
+
+  const byStandardOrder = (a: string, b: string) =>
+    (standardOrder.get(a) ?? Number.MAX_SAFE_INTEGER) -
+    (standardOrder.get(b) ?? Number.MAX_SAFE_INTEGER);
+
   const countries = Array.from(
-    new Set(
-      rows.map(
-        (row) =>
-          String(row.country || "").trim() ||
-          otherLabel
-      )
-    )
-  );
+    new Set(rows.map(countryKey))
+  ).sort(byStandardOrder);
 
   const contentHtml = countries
     .map((country) => {
@@ -5126,6 +5152,11 @@ function printWineListA4() {
               String(row.region || "").trim() ||
               otherLabel
           )
+        )
+      ).sort((a, b) =>
+        byStandardOrder(
+          `${country}\n${a}`,
+          `${country}\n${b}`
         )
       );
 
@@ -5281,7 +5312,9 @@ function printWineListA4() {
   <h4><span>${escapeHtml(
     wineCategoryLabel(category)
   )}</span></h4>
-  ${producerHtml}
+  <div class="category-columns">
+    ${producerHtml}
+  </div>
 </section>`;
             })
             .join("");
@@ -5370,7 +5403,20 @@ function printWineListA4() {
       color: #57534e;
     }
 
+    /*
+     * 2段組は色見出しごとの .category-columns に持たせる。
+     * 国・地域・色見出しを段組の外の通常ブロックにすることで
+     * break-after: avoid が効き、見出しだけがページ下端に
+     * 取り残されない（リスト全体を1つの段組にして
+     * column-span: all の見出しを挟む構造では、Chromiumが
+     * 見出し直後の改ページ回避を守らないため）。
+     * 地域ごとの強制改ページは行わず、空きがあれば続けて配置する。
+     */
     .print-columns {
+      display: block;
+    }
+
+    .category-columns {
       column-count: 2;
       column-gap: 7mm;
       column-rule: 0.25pt solid #e7e2dc;
@@ -5381,7 +5427,6 @@ function printWineListA4() {
     }
 
     .country-group h2 {
-      column-span: all;
       margin: 0 0 1.1mm;
       padding: 0.65mm 0 0.65mm;
       border-bottom: 0.5pt solid #aaa39b;
@@ -5392,6 +5437,7 @@ function printWineListA4() {
       letter-spacing: 0.15em;
       break-after: avoid;
       page-break-after: avoid;
+      break-inside: avoid;
     }
 
     .region-group {
@@ -5399,7 +5445,6 @@ function printWineListA4() {
     }
 
     .region-group h3 {
-      column-span: all;
       margin: 1.2mm 0 0.55mm;
       font-size: 18pt;
       line-height: 1;
@@ -5407,6 +5452,7 @@ function printWineListA4() {
       font-weight: 700;
       break-after: avoid;
       page-break-after: avoid;
+      break-inside: avoid;
     }
 
     .category-group h4 {
@@ -5415,7 +5461,6 @@ function printWineListA4() {
        * 日本語(白 / 赤等)は字間が空きすぎて不自然にならないよう狭める。
        */
       --category-letter-spacing: 0.3em;
-      column-span: all;
       margin: 0.55mm 0 1.1mm;
       font-family:
         Arial,
@@ -5430,6 +5475,7 @@ function printWineListA4() {
       color: #57534e;
       break-after: avoid;
       page-break-after: avoid;
+      break-inside: avoid;
     }
 
     html:lang(ja) .category-group h4 {
@@ -5437,7 +5483,7 @@ function printWineListA4() {
     }
 
     /*
-     * h4自体はcolumn-span: allのblockのまま維持し、
+     * h4自体は通常のblockのまま維持し、
      * 内側のspanだけinline-blockにして文字幅ぶんの下線を引く。
      * padding-leftは末尾のletter-spacing分と釣り合わせ、
      * 下線と文字を中央に揃えるため。
@@ -15862,6 +15908,23 @@ const wineListRegions = Array.from(
   a.localeCompare(b)
 );
 
+/*
+ * 現在の一覧に存在する地域だけを有効な選択とみなす
+ * （表示モード切替などで消えた地域が残って何も表示されなくなるのを防ぐ）。
+ * 有効な選択が0件なら「全地域」と同じ扱い。
+ */
+const activeWineListRegionFilters =
+  wineListRegionFilters.filter((region) =>
+    wineListRegions.includes(region)
+  );
+
+const toggleWineListRegionFilter = (region: string) =>
+  setWineListRegionFilters((prev) =>
+    prev.includes(region)
+      ? prev.filter((r) => r !== region)
+      : [...prev, region]
+  );
+
 const baseDisplayedWineList =
   wineListViewMode === "LISTED"
     ? listedWineList
@@ -15888,8 +15951,10 @@ const wineListSearchTerms =
 const filteredWineList =
   baseDisplayedWineList.filter((row) => {
     if (
-      wineListRegionFilter !== "ALL" &&
-      row.region?.trim() !== wineListRegionFilter
+      activeWineListRegionFilters.length > 0 &&
+      !activeWineListRegionFilters.includes(
+        row.region?.trim() || ""
+      )
     ) {
       return false;
     }
@@ -20606,36 +20671,48 @@ const soldBottleCanApply =
               {tWine("regionLabel")}
             </span>
 
+            {/*
+              地域は複数選択。クリックでON/OFF、「全地域」で解除。
+            */}
             <button
               type="button"
               className={
-                wineListRegionFilter === "ALL"
+                activeWineListRegionFilters.length === 0
                   ? "btn btn-primary"
                   : "btn btn-secondary"
               }
+              aria-pressed={
+                activeWineListRegionFilters.length === 0
+              }
               onClick={() =>
-                setWineListRegionFilter("ALL")
+                setWineListRegionFilters([])
               }
             >
               {tWine("allRegions")}
             </button>
 
-            {wineListRegions.map((region) => (
-              <button
-                key={region}
-                type="button"
-                className={
-                  wineListRegionFilter === region
-                    ? "btn btn-primary"
-                    : "btn btn-secondary"
-                }
-                onClick={() =>
-                  setWineListRegionFilter(region)
-                }
-              >
-                {region}
-              </button>
-            ))}
+            {wineListRegions.map((region) => {
+              const selected =
+                activeWineListRegionFilters.includes(region);
+
+              return (
+                <button
+                  key={region}
+                  type="button"
+                  className={
+                    selected
+                      ? "btn btn-primary"
+                      : "btn btn-secondary"
+                  }
+                  aria-pressed={selected}
+                  onClick={() =>
+                    toggleWineListRegionFilter(region)
+                  }
+                >
+                  {region}
+                </button>
+              );
+            })}
           </div>
 
           <div className="mb-3 flex flex-wrap items-center gap-2">
