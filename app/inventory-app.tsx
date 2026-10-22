@@ -1374,6 +1374,10 @@ const EXTRA_UI_I18N = {
     soldBottleConfirmRemaining: "{count} vin(s) à confirmer",
     soldBottleConfirmedBadge: "Confirmé",
     soldBottleUnconfirmedBadge: "À confirmer",
+    soldBottleRemoveCandidate: "Supprimer le candidat",
+    soldBottleRemoveCandidateConfirm: "Retirer « {wine} » des candidats de cette vente ?\nLe stock et l’historique ne sont pas modifiés.",
+    soldBottleCandidateCount: "Candidats",
+    soldBottleAllCandidatesRemoved: "Tous les candidats ont été retirés. Aucune vente ne sera enregistrée.",
 
     stockHistoryTitle: "9. Historique des mouvements de stock",
     stockHistoryDescription:
@@ -2098,6 +2102,10 @@ const EXTRA_UI_I18N = {
     soldBottleConfirmRemaining: "{count}件を確認してください",
     soldBottleConfirmedBadge: "確認済み",
     soldBottleUnconfirmedBadge: "未確認",
+    soldBottleRemoveCandidate: "候補から削除",
+    soldBottleRemoveCandidateConfirm: "「{wine}」を今回の販売候補から削除しますか？\n在庫・履歴は変更されません。",
+    soldBottleCandidateCount: "候補",
+    soldBottleAllCandidatesRemoved: "すべての候補を削除しました。販売は登録されません。",
 
     stockHistoryTitle: "9. 在庫移動履歴",
     stockHistoryDescription:
@@ -2811,6 +2819,10 @@ const EXTRA_UI_I18N = {
     soldBottleConfirmRemaining: "Confirm {count} wine(s)",
     soldBottleConfirmedBadge: "Confirmed",
     soldBottleUnconfirmedBadge: "Unconfirmed",
+    soldBottleRemoveCandidate: "Remove candidate",
+    soldBottleRemoveCandidateConfirm: "Remove “{wine}” from the candidates for this sale?\nInventory and history are not changed.",
+    soldBottleCandidateCount: "Candidates",
+    soldBottleAllCandidatesRemoved: "All candidates were removed. No sale will be recorded.",
 
     stockHistoryTitle: "9. Inventory movement history",
     stockHistoryDescription:
@@ -8916,6 +8928,62 @@ function updateSoldBottleDetection(
             : item
       )
   );
+}
+
+/*
+ * 該当する在庫が無いAI判定候補を、今回の販売処理から外す。
+ * React stateから除外するだけで、wines / inventory /
+ * stock_movements には一切触れない（SALEも作成しない）。
+ * 除外後の件数・販売確定可否は既存の派生値がそのまま再計算する。
+ */
+function removeSoldBottleDetection(
+  item: SoldBottleDetection
+) {
+  if (applyingSoldBottles) {
+    return;
+  }
+
+  const wineLabel =
+    [
+      item.producer,
+      item.wine_name || item.cuvee,
+      item.vintage,
+    ]
+      .filter(Boolean)
+      .join(" ") || "—";
+
+  if (
+    !confirm(
+      tUi(
+        "soldBottleRemoveCandidateConfirm",
+        { wine: wineLabel }
+      )
+    )
+  ) {
+    return;
+  }
+
+  const remaining =
+    soldBottleDetections.filter(
+      (detection) =>
+        detection.id !== item.id
+    );
+
+  setSoldBottleDetections(
+    (prev) =>
+      prev.filter(
+        (detection) =>
+          detection.id !== item.id
+      )
+  );
+
+  if (remaining.length === 0) {
+    setSoldBottleStatus(
+      tUi(
+        "soldBottleAllCandidatesRemoved"
+      )
+    );
+  }
 }
 
 function clearSoldBottleResults() {
@@ -21479,7 +21547,24 @@ const soldBottleCanApply =
                         : "rounded-xl border border-amber-300 bg-amber-50/40 p-4"
                     }
                   >
-                    <div className="mb-2 flex justify-end">
+                    <div className="mb-2 flex flex-wrap items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-secondary min-h-11 px-4 text-sm text-red-700"
+                        onClick={() =>
+                          removeSoldBottleDetection(
+                            item
+                          )
+                        }
+                        disabled={
+                          applyingSoldBottles
+                        }
+                      >
+                        {tUi(
+                          "soldBottleRemoveCandidate"
+                        )}
+                      </button>
+
                       <span
                         className={
                           item.selectedWineId
@@ -21769,6 +21854,12 @@ const soldBottleCanApply =
                     : "rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800"
                 }
               >
+                {tUi(
+                  "soldBottleCandidateCount"
+                )}
+                {"："}
+                {soldBottleTotalCount}
+                {"　"}
                 {tUi(
                   "soldBottleConfirmedCount"
                 )}
