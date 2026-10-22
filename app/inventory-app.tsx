@@ -3650,17 +3650,23 @@ function recommendedSalePriceFromCost(
  *
  * - 測定は印刷と同じ幅（A4 210mm − 左右余白7mm×2 = 196mm）で行い、
  *   1ページの高さは A4 297mm − 上下余白(7mm + 8mm) から安全マージンを
- *   引いた値を上限とする。
+ *   引いた値を上限とする。高さはページ全体（継続見出し・見出し・
+ *   2段組をブラウザが実際に左右へ振り分けた後の高さ）を1回だけ測る。
  * - 各ページには country / region / category の section を浅く複製して
  *   入れるので、既存の印刷CSS（.region-group h3 等）はそのまま効く。
- * - 地域見出し・色見出しは、最初の生産者グループと一緒に置けない場合は
- *   次ページへ送る（見出しだけがページ下端に残らない）。
- * - 生産者グループは分割しない。順序も変えない。
+ * - 生産者グループは原則分割しない。残りスペースに入らなければ次ページへ
+ *   送る。ただし空のページにも入らない大きさのグループだけは、ワイン行の
+ *   境目で分割し、今のページの残り（もう一方の段を含む）から順に埋める
+ *   （分割した続きには生産者名を再表示）。これにより、大きな生産者の前で
+ *   ページがほぼ空白のまま終わったり、測定と実際の改ページがずれて
+ *   タイトルだけのページができたりしない。
+ * - 地域見出し・色見出しは、最初の生産者（またはその最初の部分）と
+ *   一緒に置く（見出しだけがページ下端に残らない）。
  * - 継続表示：
  *     色の途中からページが始まる     → 「地域 — 色」
  *     同じ地域の新しい色から始まる   → 「地域」（直後に色見出しがある）
  *     新しい地域・国から始まる       → 表示なし
- *   1ページ目には表示しない。国名・タイトルは繰り返さない。
+ *   1ページ目には表示しない。タイトル・国名は繰り返さない。
  */
 function paginateWineListPrintSheet(doc: Document) {
   const flow = doc.querySelector<HTMLElement>(".print-columns");
@@ -3684,13 +3690,12 @@ function paginateWineListPrintSheet(doc: Document) {
 
   flow.textContent = "";
 
+  type Continuation = { region: string; category?: string } | undefined;
+
   let page = doc.createElement("div");
   let pageHasContent = false;
 
-  const newPage = (continuation?: {
-    region: string;
-    category?: string;
-  }) => {
+  const newPage = (continuation: Continuation) => {
     page = doc.createElement("div");
     page.className = "print-page";
     flow.appendChild(page);
@@ -3713,10 +3718,11 @@ function paginateWineListPrintSheet(doc: Document) {
     }
   };
 
+  // ページ全体の実測高さ（2段組はブラウザが左右に振り分けた後の高さ）
   const fits = () =>
     page.getBoundingClientRect().height <= pageLimit;
 
-  newPage();
+  newPage(undefined);
 
   if (header) {
     page.appendChild(header);
@@ -3754,12 +3760,27 @@ function paginateWineListPrintSheet(doc: Document) {
           )
         );
 
+        // 見出しを伴ってページが変わる場合の継続表示
+        const startContinuation = (): Continuation =>
+          firstCategory || countryHeading
+            ? undefined
+            : { region: regionName };
+
+        // 色の途中でページが変わる場合の継続表示
+        const midContinuation: Continuation = {
+          region: regionName,
+          category: categoryName,
+        };
+
+        let blockRoot = doc.createElement("section");
+        let columns = doc.createElement("div");
+
         // 見出し（必要なもの）＋ 2段組 を浅い複製のsectionに入れて配置する
         const placeBlock = (withHeadings: boolean) => {
           const countrySection = country.cloneNode(false) as HTMLElement;
           const regionSection = region.cloneNode(false) as HTMLElement;
           const categorySection = category.cloneNode(false) as HTMLElement;
-          const columns = doc.createElement("div");
+          columns = doc.createElement("div");
           columns.className = "category-columns";
 
           if (withHeadings) {
@@ -3778,26 +3799,137 @@ function paginateWineListPrintSheet(doc: Document) {
           regionSection.appendChild(categorySection);
           countrySection.appendChild(regionSection);
           page.appendChild(countrySection);
-
-          return { countrySection, columns };
+          blockRoot = countrySection;
         };
 
-        // 見出し ＋ 最初の生産者グループは必ず同じページに置く
-        let block = placeBlock(true);
-        if (groups[0]) {
-          block.columns.appendChild(groups[0]);
+        // buildが空のページ（継続表示付き）に収まるかを試す。試したページは破棄する。
+        const fitsOnFreshPage = (
+          continuation: Continuation,
+          build: () => void
+        ) => {
+          const savedPage = page;
+          const savedHasContent = pageHasContent;
+          const savedRoot = blockRoot;
+          const savedColumns = columns;
+
+          newPage(continuation);
+          build();
+          const ok = fits();
+
+          page.remove();
+          page = savedPage;
+          pageHasContent = savedHasContent;
+          blockRoot = savedRoot;
+          columns = savedColumns;
+
+          return ok;
+        };
+
+        /*
+         * 空のページにも入らない大きな生産者グループを、ワイン行の境目で
+         * 分割して配置する。今のページの残り → もう一方の段 → 次ページ、
+         * の順に埋め、各部分の先頭に生産者名を再表示する。
+         * headingsInBlock=true の場合、見出しを最初の部分と一緒に保つ
+         * （1行も入らなければ見出しごと次ページへ移す）。
+         */
+        const splitGroup = (
+          group: HTMLElement,
+          headingsInBlock: boolean
+        ) => {
+          const title = group.querySelector<HTMLElement>(":scope > h5");
+          const rows = Array.from(
+            group.querySelectorAll<HTMLElement>(":scope > .wine-row")
+          );
+          let keepHeadings = headingsInBlock;
+
+          const openPart = () => {
+            const part = group.cloneNode(false) as HTMLElement;
+            if (title) {
+              part.appendChild(title.cloneNode(true));
+            }
+            columns.appendChild(part);
+            return part;
+          };
+
+          let part = openPart();
+          let partRows = 0;
+
+          for (const row of rows) {
+            part.appendChild(row);
+
+            if (fits()) {
+              partRows += 1;
+              keepHeadings = false;
+              continue;
+            }
+
+            row.remove();
+
+            // 今の部分が満杯：まずもう一方の段に新しい部分を試す
+            if (partRows > 0) {
+              const nextPart = openPart();
+              nextPart.appendChild(row);
+
+              if (fits()) {
+                part = nextPart;
+                partRows = 1;
+                continue;
+              }
+
+              nextPart.remove();
+            } else {
+              part.remove();
+            }
+
+            // このページには入らない：次ページへ
+            if (keepHeadings) {
+              blockRoot.remove();
+              newPage(startContinuation());
+              placeBlock(true);
+            } else {
+              newPage(midContinuation);
+              placeBlock(false);
+            }
+
+            keepHeadings = false;
+            part = openPart();
+            part.appendChild(row);
+            partRows = 1;
+          }
+
+          pageHasContent = true;
+        };
+
+        // 1) 見出し ＋ 最初の生産者グループ（必ず同じページに置く）
+        const first = groups[0];
+        placeBlock(true);
+        if (first) {
+          columns.appendChild(first);
         }
 
-        if (!fits() && pageHasContent) {
-          block.countrySection.remove();
-          newPage(
-            firstCategory || countryHeading
-              ? undefined
-              : { region: regionName }
-          );
-          block = placeBlock(true);
-          if (groups[0]) {
-            block.columns.appendChild(groups[0]);
+        if (!fits()) {
+          blockRoot.remove();
+
+          const buildStart = () => {
+            placeBlock(true);
+            if (first) {
+              columns.appendChild(first);
+            }
+          };
+
+          if (
+            pageHasContent &&
+            fitsOnFreshPage(startContinuation(), buildStart)
+          ) {
+            // 次ページなら丸ごと入る → 分割せず次ページへ
+            newPage(startContinuation());
+            buildStart();
+          } else {
+            // 空のページにも入らない（またはこのページが空）→ 見出しと一緒に分割配置
+            placeBlock(true);
+            if (first) {
+              splitGroup(first, true);
+            }
           }
         }
 
@@ -3805,15 +3937,29 @@ function paginateWineListPrintSheet(doc: Document) {
         countryHeading = null;
         firstCategory = false;
 
+        // 2) 残りの生産者グループ
         for (const group of groups.slice(1)) {
-          block.columns.appendChild(group);
+          columns.appendChild(group);
 
-          if (!fits()) {
-            group.remove();
-            newPage({ region: regionName, category: categoryName });
-            block = placeBlock(false);
-            block.columns.appendChild(group);
+          if (fits()) {
+            continue;
+          }
+
+          group.remove();
+
+          const buildNext = () => {
+            placeBlock(false);
+            columns.appendChild(group);
+          };
+
+          if (fitsOnFreshPage(midContinuation, buildNext)) {
+            // 次ページなら丸ごと入る → 分割せず次ページへ
+            newPage(midContinuation);
+            buildNext();
             pageHasContent = true;
+          } else {
+            // 空のページにも入らない大きさ → 今のページの残りから分割して埋める
+            splitGroup(group, false);
           }
         }
       }
