@@ -1811,6 +1811,104 @@ const EXTRA_UI_I18N = {
     alertLoading: "Chargement...",
     alertNoResults: "Aucun vin ne correspond à ces critères.",
     alertRefresh: "Actualiser",
+    retailSectionTitle: "19. Vente au comptoir / 店頭販売",
+    retailSectionDescription:
+      "Sélectionnez des vins en stock pour établir un ticket de vente ; la validation déduit le stock (SALE). L'annulation se fait par ticket et le ticket n'est jamais supprimé.",
+    retailRefresh: "Actualiser",
+    retailLoading: "Chargement...",
+    retailLoadFailed: "Échec du chargement des données de vente : {error}",
+    retailViewerReadOnly: "Accès en lecture seule : la validation des ventes n'est pas possible.",
+    retailVatRateLabel: "Taux de TVA (vente au comptoir)",
+    retailVatSave: "Enregistrer",
+    retailVatSaving: "Enregistrement...",
+    retailVatSaveConfirm: "Définir le taux de TVA de la vente au comptoir à {rate} % ?\n(Les tickets existants ne sont pas modifiés.)",
+    retailVatSaved: "Taux de TVA enregistré : {rate} %",
+    retailVatSaveFailed: "Échec de l'enregistrement du taux de TVA : {error}",
+    retailVatInvalid: "Le taux de TVA doit être un nombre entre 0 et 99,99 (2 décimales max.).",
+    retailVatNotSet: "Taux de TVA non défini : la vente ne peut pas être validée (à définir par le propriétaire).",
+    retailVatOwnerOnly: "Seul le propriétaire (owner) peut modifier le taux de TVA.",
+    retailSaleDateLabel: "Date de vente",
+    retailCustomerLabel: "Client (facultatif)",
+    retailPaymentLabel: "Mode de paiement",
+    retailPaymentNone: "Non précisé",
+    retailPaymentCash: "Espèces",
+    retailPaymentCard: "Carte",
+    retailPaymentOther: "Autre",
+    retailPaymentNote: "Le mode de paiement est indicatif. Cette fonction ne remplace ni l'enregistrement officiel des encaissements ni une caisse certifiée.",
+    retailSearchTitle: "Rechercher un vin",
+    retailSearchPlaceholder: "Producteur, vin, cuvée, millésime, région",
+    retailSearchCount: "{shown} affichés sur {total} (vins en stock uniquement)",
+    retailNoProducts: "Aucun vin en stock ne correspond.",
+    retailStockLabel: "Stock {qty}",
+    retailInCart: "Panier {qty}",
+    retailPriceNotSet: "Prix non défini",
+    retailPriceNotSetAlert: "Prix de vente (sale_price) non défini : ajout impossible. Définissez le prix dans la section 7.",
+    retailAddToCart: "Ajouter au ticket",
+    retailCartTitle: "Ticket de vente",
+    retailCartEmpty: "Ajoutez des vins avec « ＋ » depuis la liste.",
+    retailRemoveLine: "Retirer",
+    retailColQty: "Qté",
+    retailColWine: "Désignation",
+    retailColVintage: "Millésime",
+    retailColUnitPriceTtc: "PU TTC",
+    retailColLineTotalTtc: "Total TTC",
+    retailListPriceBadge: "Prix carte",
+    retailManualPriceBadge: "Prix manuel",
+    retailResetPrice: "Revenir à {price}",
+    retailLineOverStock: "Stock insuffisant (stock : {stock}).",
+    retailTotalBottles: "Nombre de bouteilles",
+    retailTotalHtEstimate: "Total HT (indicatif)",
+    retailTotalVatEstimate: "TVA {rate} % (indicatif)",
+    retailTotalTtc: "Total TTC",
+    retailTotalHt: "Total HT",
+    retailTotalVat: "TVA {rate} %",
+    retailEstimateNote: "HT et TVA sont indicatifs ; les montants recalculés par le serveur à la validation sont enregistrés sur le ticket.",
+    retailConfirmButton: "Valider la vente",
+    retailConfirming: "Validation...",
+    retailConfirmDialog: "Valider cette vente et déduire le stock ?\n\n{lines} article(s) / {qty} bouteille(s) / Total {total}",
+    retailConfirmSuccess: "Vente validée : {number} (total {total})",
+    retailConfirmAlreadyExisted: "Cet envoi avait déjà été validé ({number}). Vérifiez le contenu du ticket.",
+    retailConfirmFailed: "Impossible de valider la vente : {error}",
+    retailConfirmNoResult: "Résultat de validation introuvable. Vérifiez l'historique des ventes.",
+    retailBlockedVat: "Taux de TVA non défini : la vente ne peut pas être validée.",
+    retailBlockedEmpty: "Le ticket est vide.",
+    retailBlockedPrice: "Prix unitaire invalide (montant supérieur à 0, 2 décimales max.).",
+    retailBlockedStock: "Une quantité dépasse le stock disponible.",
+    retailBlockedDate: "La date de vente ne peut pas être dans le futur.",
+    retailErrStock: "Stock insuffisant : {wine}. Rechargez le stock.",
+    retailErrNotAuthenticated: "Session introuvable. Veuillez vous reconnecter.",
+    retailErrForbidden: "Vous n'avez pas les droits pour cette opération.",
+    retailErrWineUnavailable: "Un vin n'est plus vendable (inactif ou fusionné). Actualisez la liste.",
+    retailErrInvalidQuantity: "Quantité invalide.",
+    retailErrTooManyItems: "Un ticket est limité à 100 lignes.",
+    retailErrCustomerTooLong: "Le nom du client est limité à 200 caractères.",
+    retailErrAlreadyCancelled: "Ce ticket est déjà annulé.",
+    retailErrSaleNotFound: "Ticket introuvable.",
+    retailErrMovementMismatch: "L'historique de stock ne correspond pas au ticket : annulation impossible. Contactez l'administrateur.",
+    retailLastSaleTitle: "Vente validée",
+    retailLastSaleAlreadyExisted: "Ticket déjà validé (renvoi)",
+    retailPrint: "Imprimer / PDF",
+    retailPrintWindowBlocked: "Impossible d'ouvrir la fenêtre d'impression. Autorisez les fenêtres pop-up.",
+    retailHistoryTitle: "Historique des ventes au comptoir",
+    retailHistoryEmpty: "Aucune vente au comptoir pour le moment.",
+    retailHistoryLoadFailed: "Échec du chargement de l'historique : {error}",
+    retailHistoryLoadMore: "Charger plus",
+    retailBottlesCount: "{qty} bt",
+    retailStatusConfirmed: "Validée",
+    retailStatusCancelled: "Annulée",
+    retailShowDetails: "Détails",
+    retailHideDetails: "Fermer",
+    retailCancelButton: "Annuler",
+    retailCancelling: "Annulation...",
+    retailCancelOwnerOnly: "Seul le propriétaire (owner) peut annuler une vente.",
+    retailCancelReasonPrompt: "Annulation de {number}.\nMotif (facultatif, 500 caractères max.) :",
+    retailCancelReasonTooLong: "Le motif est limité à 500 caractères.",
+    retailCancelConfirm: "Annuler {number} ({qty} bouteille(s)) et remettre le stock ?\nLe ticket n'est pas supprimé et reste marqué « annulé ».",
+    retailCancelSuccess: "{number} annulé.",
+    retailCancelSuccessSkipped: "{number} annulé ({skipped} ligne(s) déjà annulée(s) en section 9 n'ont pas été remises une seconde fois).",
+    retailCancelFailed: "Annulation impossible : {error}",
+    retailCancelledInfo: "Annulé le : {date} / Motif : {reason}",
+    retailSection9UndoGuide: "Annuler depuis l'historique des ventes au comptoir",
   },
   JA: {
     duplicateWarning: "重複の可能性: 伝票 {invoice} / {producer} / {wine} / {vintage}",
@@ -2528,6 +2626,104 @@ const EXTRA_UI_I18N = {
     alertLoading: "読み込み中...",
     alertNoResults: "該当するワインがありません。",
     alertRefresh: "更新",
+    retailSectionTitle: "19. 店頭販売 / Vente au comptoir",
+    retailSectionDescription:
+      "在庫ワインを選んで販売伝票を作成し、確定すると在庫からSALEとして減算します。取消は伝票単位で行い、伝票は削除されません。",
+    retailRefresh: "更新",
+    retailLoading: "読み込み中...",
+    retailLoadFailed: "店頭販売データの取得に失敗しました：{error}",
+    retailViewerReadOnly: "閲覧専用のため、販売の確定はできません。",
+    retailVatRateLabel: "TVA率（店頭販売）",
+    retailVatSave: "保存",
+    retailVatSaving: "保存中...",
+    retailVatSaveConfirm: "店頭販売のTVA率を {rate}% に設定しますか？\n（過去の伝票には影響しません）",
+    retailVatSaved: "TVA率を保存しました：{rate}%",
+    retailVatSaveFailed: "TVA率の保存に失敗しました：{error}",
+    retailVatInvalid: "TVA率は 0〜99.99 の数値（小数2桁まで）で入力してください。",
+    retailVatNotSet: "TVA率が未設定のため、販売を確定できません（ownerが設定してください）。",
+    retailVatOwnerOnly: "TVA率の変更はownerのみ可能です。",
+    retailSaleDateLabel: "販売日",
+    retailCustomerLabel: "顧客（任意）",
+    retailPaymentLabel: "支払方法",
+    retailPaymentNone: "未指定",
+    retailPaymentCash: "現金",
+    retailPaymentCard: "カード",
+    retailPaymentOther: "その他",
+    retailPaymentNote: "支払方法は参考情報です。本機能は正式な入金記録・認証レジの代替ではありません。",
+    retailSearchTitle: "ワイン検索",
+    retailSearchPlaceholder: "生産者・ワイン名・キュヴェ・ヴィンテージ・地域",
+    retailSearchCount: "{total}件中 {shown}件を表示（在庫ありのみ）",
+    retailNoProducts: "該当する在庫ワインがありません。",
+    retailStockLabel: "在庫 {qty}",
+    retailInCart: "カート {qty}",
+    retailPriceNotSet: "価格未設定",
+    retailPriceNotSetAlert: "販売価格（sale_price）が未設定のため追加できません。Section 7で価格を設定してください。",
+    retailAddToCart: "カートに追加",
+    retailCartTitle: "販売伝票",
+    retailCartEmpty: "左の一覧から「＋」でワインを追加してください。",
+    retailRemoveLine: "削除",
+    retailColQty: "数量",
+    retailColWine: "商品",
+    retailColVintage: "Vintage",
+    retailColUnitPriceTtc: "単価 TTC",
+    retailColLineTotalTtc: "小計 TTC",
+    retailListPriceBadge: "設定価格",
+    retailManualPriceBadge: "手動価格",
+    retailResetPrice: "{price}に戻す",
+    retailLineOverStock: "在庫が不足しています（在庫 {stock}）。",
+    retailTotalBottles: "合計本数",
+    retailTotalHtEstimate: "合計 HT（参考）",
+    retailTotalVatEstimate: "TVA {rate}%（参考）",
+    retailTotalTtc: "合計 TTC",
+    retailTotalHt: "合計 HT",
+    retailTotalVat: "TVA {rate}%",
+    retailEstimateNote: "HT・TVAは参考値です。確定時にサーバー側で再計算された金額が伝票に記録されます。",
+    retailConfirmButton: "販売を確定",
+    retailConfirming: "確定中...",
+    retailConfirmDialog: "この販売を確定して在庫を減らしますか？\n\n{lines}品目 / {qty}本 / 合計 {total}",
+    retailConfirmSuccess: "販売を確定しました：{number}（合計 {total}）",
+    retailConfirmAlreadyExisted: "この送信は既に確定済みでした（{number}）。伝票内容を確認してください。",
+    retailConfirmFailed: "販売を確定できませんでした：{error}",
+    retailConfirmNoResult: "確定結果を取得できませんでした。販売履歴を確認してください。",
+    retailBlockedVat: "TVA率が未設定のため、販売を確定できません。",
+    retailBlockedEmpty: "カートが空です。",
+    retailBlockedPrice: "単価が正しくありません（0より大きい金額、小数2桁まで）。",
+    retailBlockedStock: "在庫を超える数量があります。",
+    retailBlockedDate: "販売日に未来の日付は指定できません。",
+    retailErrStock: "在庫が不足しています：{wine}。最新の在庫を読み込み直してください。",
+    retailErrNotAuthenticated: "ログイン情報を確認できません。再ログインしてください。",
+    retailErrForbidden: "この操作を行う権限がありません。",
+    retailErrWineUnavailable: "販売できないワイン（無効・統合済み）が含まれています。一覧を更新してください。",
+    retailErrInvalidQuantity: "数量が正しくありません。",
+    retailErrTooManyItems: "1伝票の明細は100行までです。",
+    retailErrCustomerTooLong: "顧客名は200文字以内で入力してください。",
+    retailErrAlreadyCancelled: "この伝票は既に取消済みです。",
+    retailErrSaleNotFound: "伝票が見つかりません。",
+    retailErrMovementMismatch: "在庫履歴と伝票の内容が一致しないため取消できません。管理者に連絡してください。",
+    retailLastSaleTitle: "販売を確定しました",
+    retailLastSaleAlreadyExisted: "確定済みの伝票（再送）",
+    retailPrint: "印刷 / PDF",
+    retailPrintWindowBlocked: "印刷ウィンドウを開けませんでした。ポップアップを許可してください。",
+    retailHistoryTitle: "店頭販売履歴",
+    retailHistoryEmpty: "店頭販売の履歴はまだありません。",
+    retailHistoryLoadFailed: "販売履歴の取得に失敗しました：{error}",
+    retailHistoryLoadMore: "さらに読み込む",
+    retailBottlesCount: "{qty}本",
+    retailStatusConfirmed: "確定",
+    retailStatusCancelled: "取消済み",
+    retailShowDetails: "詳細",
+    retailHideDetails: "閉じる",
+    retailCancelButton: "取消",
+    retailCancelling: "取消中...",
+    retailCancelOwnerOnly: "販売の取消はownerのみ可能です。",
+    retailCancelReasonPrompt: "{number} を取り消します。\n取消理由を入力してください（任意・500文字以内）。",
+    retailCancelReasonTooLong: "取消理由は500文字以内で入力してください。",
+    retailCancelConfirm: "{number}（{qty}本）を取り消して在庫を戻しますか？\n伝票は削除されず「取消済み」として残ります。",
+    retailCancelSuccess: "{number} を取り消しました。",
+    retailCancelSuccessSkipped: "{number} を取り消しました（Section 9で取消済みだった {skipped} 行は二重に戻していません）。",
+    retailCancelFailed: "取消できませんでした：{error}",
+    retailCancelledInfo: "取消日時：{date} / 理由：{reason}",
+    retailSection9UndoGuide: "店頭販売履歴から取消してください",
   },
   EN: {
     duplicateWarning: "Possible duplicate: invoice {invoice} / {producer} / {wine} / {vintage}",
@@ -3246,6 +3442,104 @@ const EXTRA_UI_I18N = {
     alertLoading: "Loading...",
     alertNoResults: "No wines match this filter.",
     alertRefresh: "Refresh",
+    retailSectionTitle: "19. Counter Sales / Vente au comptoir",
+    retailSectionDescription:
+      "Pick wines in stock to build a sales slip; confirming deducts the stock as SALE. Cancellation is per slip and slips are never deleted.",
+    retailRefresh: "Refresh",
+    retailLoading: "Loading...",
+    retailLoadFailed: "Failed to load counter sales data: {error}",
+    retailViewerReadOnly: "Read-only access: sales cannot be confirmed.",
+    retailVatRateLabel: "VAT rate (counter sales)",
+    retailVatSave: "Save",
+    retailVatSaving: "Saving...",
+    retailVatSaveConfirm: "Set the counter-sales VAT rate to {rate}%?\n(Existing slips are not affected.)",
+    retailVatSaved: "VAT rate saved: {rate}%",
+    retailVatSaveFailed: "Failed to save the VAT rate: {error}",
+    retailVatInvalid: "The VAT rate must be a number from 0 to 99.99 (max. 2 decimals).",
+    retailVatNotSet: "VAT rate not set: sales cannot be confirmed (the owner must set it).",
+    retailVatOwnerOnly: "Only the owner can change the VAT rate.",
+    retailSaleDateLabel: "Sale date",
+    retailCustomerLabel: "Customer (optional)",
+    retailPaymentLabel: "Payment method",
+    retailPaymentNone: "Not specified",
+    retailPaymentCash: "Cash",
+    retailPaymentCard: "Card",
+    retailPaymentOther: "Other",
+    retailPaymentNote: "Payment method is for reference only. This feature does not replace official payment records or a certified cash register.",
+    retailSearchTitle: "Search wines",
+    retailSearchPlaceholder: "Producer, wine, cuvée, vintage, region",
+    retailSearchCount: "Showing {shown} of {total} (in-stock wines only)",
+    retailNoProducts: "No in-stock wines match.",
+    retailStockLabel: "Stock {qty}",
+    retailInCart: "In slip {qty}",
+    retailPriceNotSet: "No price",
+    retailPriceNotSetAlert: "No sale price (sale_price) set, so this wine cannot be added. Set the price in Section 7.",
+    retailAddToCart: "Add to slip",
+    retailCartTitle: "Sales slip",
+    retailCartEmpty: "Add wines with “＋” from the list.",
+    retailRemoveLine: "Remove",
+    retailColQty: "Qty",
+    retailColWine: "Item",
+    retailColVintage: "Vintage",
+    retailColUnitPriceTtc: "Unit price incl. VAT",
+    retailColLineTotalTtc: "Subtotal incl. VAT",
+    retailListPriceBadge: "List price",
+    retailManualPriceBadge: "Manual price",
+    retailResetPrice: "Back to {price}",
+    retailLineOverStock: "Not enough stock (stock: {stock}).",
+    retailTotalBottles: "Bottles",
+    retailTotalHtEstimate: "Total excl. VAT (estimate)",
+    retailTotalVatEstimate: "VAT {rate}% (estimate)",
+    retailTotalTtc: "Total incl. VAT",
+    retailTotalHt: "Total excl. VAT",
+    retailTotalVat: "VAT {rate}%",
+    retailEstimateNote: "Excl. VAT and VAT amounts are estimates; the server recalculates them on confirmation and records them on the slip.",
+    retailConfirmButton: "Confirm sale",
+    retailConfirming: "Confirming...",
+    retailConfirmDialog: "Confirm this sale and deduct the stock?\n\n{lines} item(s) / {qty} bottle(s) / Total {total}",
+    retailConfirmSuccess: "Sale confirmed: {number} (total {total})",
+    retailConfirmAlreadyExisted: "This submission was already confirmed ({number}). Please check the slip.",
+    retailConfirmFailed: "Could not confirm the sale: {error}",
+    retailConfirmNoResult: "No confirmation result was returned. Please check the sales history.",
+    retailBlockedVat: "VAT rate not set: the sale cannot be confirmed.",
+    retailBlockedEmpty: "The slip is empty.",
+    retailBlockedPrice: "Invalid unit price (must be above 0, max. 2 decimals).",
+    retailBlockedStock: "A quantity exceeds the available stock.",
+    retailBlockedDate: "The sale date cannot be in the future.",
+    retailErrStock: "Not enough stock: {wine}. Please reload the stock.",
+    retailErrNotAuthenticated: "Session not found. Please sign in again.",
+    retailErrForbidden: "You do not have permission for this action.",
+    retailErrWineUnavailable: "A wine can no longer be sold (inactive or merged). Please refresh the list.",
+    retailErrInvalidQuantity: "Invalid quantity.",
+    retailErrTooManyItems: "A slip is limited to 100 lines.",
+    retailErrCustomerTooLong: "The customer name is limited to 200 characters.",
+    retailErrAlreadyCancelled: "This slip is already cancelled.",
+    retailErrSaleNotFound: "Slip not found.",
+    retailErrMovementMismatch: "The stock history does not match the slip, so it cannot be cancelled. Please contact the administrator.",
+    retailLastSaleTitle: "Sale confirmed",
+    retailLastSaleAlreadyExisted: "Already confirmed slip (resubmission)",
+    retailPrint: "Print / PDF",
+    retailPrintWindowBlocked: "Could not open the print window. Please allow pop-ups.",
+    retailHistoryTitle: "Counter sales history",
+    retailHistoryEmpty: "No counter sales yet.",
+    retailHistoryLoadFailed: "Failed to load the sales history: {error}",
+    retailHistoryLoadMore: "Load more",
+    retailBottlesCount: "{qty} btl",
+    retailStatusConfirmed: "Confirmed",
+    retailStatusCancelled: "Cancelled",
+    retailShowDetails: "Details",
+    retailHideDetails: "Close",
+    retailCancelButton: "Cancel sale",
+    retailCancelling: "Cancelling...",
+    retailCancelOwnerOnly: "Only the owner can cancel a sale.",
+    retailCancelReasonPrompt: "Cancelling {number}.\nReason (optional, max. 500 characters):",
+    retailCancelReasonTooLong: "The reason is limited to 500 characters.",
+    retailCancelConfirm: "Cancel {number} ({qty} bottle(s)) and restore the stock?\nThe slip is not deleted and stays marked as cancelled.",
+    retailCancelSuccess: "{number} cancelled.",
+    retailCancelSuccessSkipped: "{number} cancelled ({skipped} line(s) already undone in Section 9 were not restored twice).",
+    retailCancelFailed: "Could not cancel: {error}",
+    retailCancelledInfo: "Cancelled at: {date} / Reason: {reason}",
+    retailSection9UndoGuide: "Cancel from the counter sales history",
   },
 } as const;
 
@@ -4133,6 +4427,206 @@ type CompanyUserRow = {
   lastSignInAt: string | null;
   status: "ACTIVE" | "INVITED" | "UNCONFIRMED" | "UNKNOWN";
 };
+
+/*
+ * Section 19「店頭販売 / Vente au comptoir」用の型。
+ *
+ * RetailProductRow: 販売候補（inventory_viewで在庫>0、active/未統合の
+ * wineのみ）。salePriceはwine_list_settings.sale_price（TTC）。
+ * RetailCartLine: カート1行（同じwine_idは1行にまとめる）。
+ * unitPriceDraftは入力中の文字列で、確定時にLIST/MANUALを判定する。
+ * RetailSaleRow / RetailSaleItemRow: retail_sales / retail_sale_items
+ * の行そのまま（明細はDBのスナップショット列だけを使い、
+ * 現在のwines情報には依存しない）。
+ */
+type RetailProductRow = {
+  wineId: string;
+  producer: string;
+  wineName: string;
+  cuvee: string;
+  vintage: string;
+  bottleSizeCl: number;
+  region: string;
+  currentQuantity: number;
+  salePrice: number | null;
+  searchText: string;
+};
+
+type RetailCartLine = {
+  wineId: string;
+  producer: string;
+  wineName: string;
+  cuvee: string;
+  vintage: string;
+  bottleSizeCl: number;
+  quantity: number;
+  listPrice: number;
+  unitPriceDraft: string;
+};
+
+type RetailPaymentMethod = "" | "CASH" | "CARD" | "OTHER";
+
+type RetailSaleItemRow = {
+  id: string;
+  line_no: number;
+  wine_id: string;
+  producer_snapshot: string | null;
+  wine_name_snapshot: string | null;
+  cuvee_snapshot: string | null;
+  vintage_snapshot: string | null;
+  bottle_size_cl_snapshot: number | null;
+  quantity: number;
+  vat_rate_percent: number;
+  unit_price_ttc: number;
+  line_total_ht: number;
+  line_total_vat: number;
+  line_total_ttc: number;
+  price_source: string;
+};
+
+type RetailSaleRow = {
+  id: string;
+  sale_number: string;
+  sale_date: string;
+  customer_name: string | null;
+  status: "CONFIRMED" | "CANCELLED";
+  total_bottles: number;
+  total_ht: number;
+  total_vat: number;
+  total_ttc: number;
+  payment_method: string | null;
+  created_at: string;
+  cancelled_at: string | null;
+  cancel_reason: string | null;
+  items: RetailSaleItemRow[];
+};
+
+/*
+ * Section 19: 店頭販売の販売日はEurope/Paris基準
+ * （confirm_retail_sale()の未来日判定と同じ基準）。
+ * 既存のtoday()はUTC基準のため、ここでは使わない。
+ */
+function parisTodayIsoDate(): string {
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Europe/Paris",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
+  }
+}
+
+/*
+ * Section 19: confirm_retail_sale()の二重送信防止キー。
+ * crypto.randomUUIDが無い古いSafari向けにgetRandomValuesで
+ * RFC 4122 v4形式を組み立てる。
+ */
+function generateClientRequestId(): string {
+  const cryptoObj =
+    typeof crypto !== "undefined" ? crypto : undefined;
+
+  if (cryptoObj && typeof cryptoObj.randomUUID === "function") {
+    return cryptoObj.randomUUID();
+  }
+
+  const bytes = new Uint8Array(16);
+
+  if (cryptoObj && typeof cryptoObj.getRandomValues === "function") {
+    cryptoObj.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = Math.floor(Math.random() * 256);
+    }
+  }
+
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  const hex = Array.from(bytes, (b) =>
+    b.toString(16).padStart(2, "0")
+  ).join("");
+
+  return (
+    hex.slice(0, 8) + "-" +
+    hex.slice(8, 12) + "-" +
+    hex.slice(12, 16) + "-" +
+    hex.slice(16, 20) + "-" +
+    hex.slice(20)
+  );
+}
+
+/*
+ * Section 19: 価格入力（"12,50" / "12.5" 等）をTTC数値へ。
+ * 0以下・小数3桁以上・上限(999999.99、RPCと同じ)超はnull。
+ */
+function parseRetailPrice(value: string): number | null {
+  const normalized = String(value || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(",", ".");
+
+  if (!/^\d+(\.\d{1,2})?$/.test(normalized)) {
+    return null;
+  }
+
+  const price = Number(normalized);
+
+  if (!Number.isFinite(price) || price <= 0 || price > 999999.99) {
+    return null;
+  }
+
+  return price;
+}
+
+/*
+ * Section 19: HT/TVAの参考計算（セント単位の整数）。
+ * confirm_retail_sale()と同じく行単位で丸める：
+ *   ttc = 単価 × 数量 / ht = round(ttc / (1 + rate/100)) / tva = ttc − ht
+ * 正式な値は常にRPCの戻り・retail_sale_itemsを使う。
+ */
+function retailLineEstimateCents(
+  unitPriceTtc: number,
+  quantity: number,
+  vatRatePercent: number | null
+) {
+  const ttc = Math.round(unitPriceTtc * 100) * quantity;
+
+  if (vatRatePercent === null) {
+    return { ttc, ht: null as number | null, vat: null as number | null };
+  }
+
+  const ht = Math.round(ttc / (1 + vatRatePercent / 100));
+
+  return { ttc, ht: ht as number | null, vat: (ttc - ht) as number | null };
+}
+
+/*
+ * Section 19で作成したSALE movement（notesが 'RETAIL_SALE:' で始まる）。
+ * 伝票と在庫の整合を保つため、Section 9からの個別取消はさせず、
+ * 店頭販売履歴の取消（cancel_retail_sale RPC）に一本化する。
+ */
+function isRetailSaleMovementNotes(
+  notes: string | null | undefined
+): boolean {
+  return (
+    typeof notes === "string" &&
+    notes.startsWith("RETAIL_SALE:")
+  );
+}
+
+function formatRetailEuro(value: number): string {
+  try {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+    }).format(value);
+  } catch {
+    return `${value.toFixed(2)} €`;
+  }
+}
 
 function normalizeSoldBottleText(value: unknown) {
   return String(value || "")
@@ -5031,6 +5525,86 @@ const [stockAlertFilter, setStockAlertFilter] = useState<
   | "ALERT_ENABLED"
   | "REORDER"
 >("ALL");
+
+/*
+ * Section 19「店頭販売 / Vente au comptoir」用の状態。
+ *
+ * retailProducts: 販売候補（在庫>0・active/未統合）。
+ * retailVatRate: retail_sale_settings.vat_rate_percent（未設定はnull）。
+ * retailCart: カート（同じwine_idは1行）。
+ * retailClientRequestId: confirm_retail_sale()の冪等キー。
+ *   送信失敗時は同じIDのまま再送し、成功した時だけ新しく生成する
+ *   （通信失敗でも二重販売にならない）。
+ * retailSubmittingRef: setState反映前の連打も確実に止めるための同期フラグ。
+ */
+const [retailProducts, setRetailProducts] = useState<
+  RetailProductRow[]
+>([]);
+
+const [retailVatRate, setRetailVatRate] =
+  useState<number | null>(null);
+
+const [retailVatDraft, setRetailVatDraft] =
+  useState("");
+
+const [retailVatSaving, setRetailVatSaving] =
+  useState(false);
+
+const [retailLoading, setRetailLoading] =
+  useState(false);
+
+const [retailLoadError, setRetailLoadError] =
+  useState("");
+
+const [retailSearch, setRetailSearch] =
+  useState("");
+
+const [retailCart, setRetailCart] = useState<
+  RetailCartLine[]
+>([]);
+
+const [retailSaleDate, setRetailSaleDate] =
+  useState(() => parisTodayIsoDate());
+
+const [retailCustomerName, setRetailCustomerName] =
+  useState("");
+
+const [retailPaymentMethod, setRetailPaymentMethod] =
+  useState<RetailPaymentMethod>("");
+
+const [retailClientRequestId, setRetailClientRequestId] =
+  useState(() => generateClientRequestId());
+
+const [retailSubmitting, setRetailSubmitting] =
+  useState(false);
+
+const retailSubmittingRef = useRef(false);
+
+const [retailLastSale, setRetailLastSale] = useState<{
+  saleId: string;
+  saleNumber: string;
+  totalTtc: number;
+  alreadyExisted: boolean;
+} | null>(null);
+
+const [retailSales, setRetailSales] = useState<
+  RetailSaleRow[]
+>([]);
+
+const [retailSalesLoading, setRetailSalesLoading] =
+  useState(false);
+
+const [retailSalesError, setRetailSalesError] =
+  useState("");
+
+const [retailSalesHasMore, setRetailSalesHasMore] =
+  useState(false);
+
+const [retailExpandedSaleId, setRetailExpandedSaleId] =
+  useState<string | null>(null);
+
+const [retailCancellingSaleId, setRetailCancellingSaleId] =
+  useState<string | null>(null);
 
 /*
  * Section 10「初期在庫インポート（運営者専用）」用の状態。
@@ -6856,6 +7430,15 @@ async function reverseStockMovement(
 
   if (reversedMovementIds.has(movement.id)) {
     alert(tUi("stockHistoryAlreadyUndone"));
+    return;
+  }
+
+  // Section 19の店頭販売SALEは伝票単位の取消のみ（ボタン非表示に加えた二重の安全策）。
+  if (
+    movement.movement_type === "SALE" &&
+    isRetailSaleMovementNotes(movement.notes)
+  ) {
+    alert(tUi("retailSection9UndoGuide"));
     return;
   }
 
@@ -10870,6 +11453,8 @@ useEffect(() => {
   loadSavedDuplicateDecisions();
   loadStockHistory();
   loadStockAlertData();
+  loadRetailSaleData();
+  loadRetailSales(true);
   checkAdminStatus();
   loadCurrentCustomerRole();
   loadCurrentCompanyName();
@@ -14926,6 +15511,1048 @@ alert(
     return tUi("alertStatusNotSet");
   }
 
+  /*
+   * ============================================================
+   * Section 19「店頭販売 / Vente au comptoir」
+   *
+   * 読み取り：inventory_view(在庫>0) / wine_list_settings.sale_price /
+   * wine_classification_memory.region / 無効・統合済みwine一覧 /
+   * retail_sale_settings をPromise.allで並列取得（1000行超はページング）。
+   *
+   * 書き込み：
+   *   - 販売確定は confirm_retail_sale() RPCのみ（伝票・明細・SALE
+   *     movement・採番を1トランザクションで作成。金額・TVAはRPC側で
+   *     再計算される）。stock_movementsへ直接INSERTしない。
+   *   - 取消は cancel_retail_sale() RPCのみ（ownerのみ・REVERSAL方式・
+   *     伝票はDELETEしない）。
+   *   - TVA率は retail_sale_settings へのupsert（ownerのみ。RLSでも強制）。
+   * 画面のHT/TVAは参考値。伝票・履歴はDBの値をそのまま表示する。
+   * Section 19は販売伝票・在庫減算・販売履歴の用途で、
+   * 正式な入金記録・認証レジの代替ではない。
+   * ============================================================
+   */
+  const RETAIL_SALES_PAGE_SIZE = 30;
+  const RETAIL_PRODUCT_DISPLAY_LIMIT = 60;
+  const RETAIL_WALK_IN_CUSTOMER_LABEL = "Client comptoir / 一般客";
+
+  async function loadRetailExcludedWineIds(companyId: string): Promise<{
+    ids: Set<string> | null;
+    error: any;
+  }> {
+    const pageSize = 1000;
+    const ids = new Set<string>();
+
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from("wines")
+        .select("id")
+        .eq("company_id", companyId)
+        .or("is_active.eq.false,merged_into_wine_id.not.is.null")
+        .order("id")
+        .range(from, from + pageSize - 1);
+
+      if (error) {
+        return { ids: null, error };
+      }
+
+      (data || []).forEach((r: any) => ids.add(r.id));
+
+      if (!data || data.length < pageSize) {
+        return { ids, error: null };
+      }
+    }
+  }
+
+  async function loadRetailSaleData() {
+    if (retailLoading) return;
+
+    setRetailLoading(true);
+    setRetailLoadError("");
+
+    try {
+      let companyId: string;
+      try {
+        companyId = await getCurrentCompanyIdForInventory();
+      } catch (error: any) {
+        setRetailLoadError(
+          tUi("retailLoadFailed", {
+            error: error?.message || tApp("unknownError"),
+          })
+        );
+        return;
+      }
+
+      const [
+        inventoryResult,
+        settingsResult,
+        classificationResult,
+        excludedResult,
+        vatResult,
+      ] = await Promise.all([
+        selectAllRowsByWineId(() =>
+          supabase
+            .from("inventory_view")
+            .select(
+              "wine_id, producer, wine_name, cuvee, vintage, bottle_size_cl, current_quantity"
+            )
+            .eq("company_id", companyId)
+            .gt("current_quantity", 0)
+        ),
+        selectAllRowsByWineId(() =>
+          supabase
+            .from("wine_list_settings")
+            .select("wine_id, sale_price")
+            .eq("company_id", companyId)
+        ),
+        selectAllRowsByWineId(() =>
+          supabase
+            .from("wine_classification_memory")
+            .select("wine_id, region")
+            .eq("company_id", companyId)
+        ),
+        loadRetailExcludedWineIds(companyId),
+        supabase
+          .from("retail_sale_settings")
+          .select("vat_rate_percent")
+          .eq("company_id", companyId)
+          .maybeSingle(),
+      ]);
+
+      const firstError =
+        inventoryResult.error ||
+        settingsResult.error ||
+        classificationResult.error ||
+        excludedResult.error ||
+        vatResult.error;
+
+      if (firstError) {
+        setRetailLoadError(
+          tUi("retailLoadFailed", {
+            error:
+              firstError?.message || tApp("unknownError"),
+          })
+        );
+        return;
+      }
+
+      const priceMap: Record<string, number | null> = {};
+      (settingsResult.data || []).forEach((r: any) => {
+        priceMap[r.wine_id] =
+          r.sale_price === null || r.sale_price === undefined
+            ? null
+            : Number(r.sale_price);
+      });
+
+      const regionMap: Record<string, string> = {};
+      (classificationResult.data || []).forEach((r: any) => {
+        regionMap[r.wine_id] = r.region || "";
+      });
+
+      const excludedIds =
+        excludedResult.ids || new Set<string>();
+
+      const rows: RetailProductRow[] = (
+        inventoryResult.data || []
+      )
+        .filter(
+          (r: any) =>
+            !excludedIds.has(r.wine_id) &&
+            Number(r.current_quantity || 0) > 0
+        )
+        .map((r: any) => {
+          const salePrice = priceMap[r.wine_id] ?? null;
+          const region = regionMap[r.wine_id] || "";
+
+          return {
+            wineId: r.wine_id,
+            producer: r.producer || "",
+            wineName: r.wine_name || "",
+            cuvee: r.cuvee || "",
+            vintage: r.vintage || "",
+            bottleSizeCl: Number(r.bottle_size_cl || 75),
+            region,
+            currentQuantity: Number(r.current_quantity || 0),
+            salePrice:
+              salePrice !== null &&
+              Number.isFinite(salePrice) &&
+              salePrice > 0
+                ? salePrice
+                : null,
+            searchText: normalizeSoldBottleText(
+              [
+                r.producer,
+                r.wine_name,
+                r.cuvee,
+                r.vintage,
+                region,
+              ].join(" ")
+            ),
+          };
+        })
+        .sort(
+          (a: RetailProductRow, b: RetailProductRow) =>
+            a.producer.localeCompare(b.producer, "fr") ||
+            a.wineName.localeCompare(b.wineName, "fr") ||
+            a.vintage.localeCompare(b.vintage, "fr")
+        );
+
+      setRetailProducts(rows);
+
+      const vatValue = vatResult.data?.vat_rate_percent;
+      const vatRate =
+        vatValue === null || vatValue === undefined
+          ? null
+          : Number(vatValue);
+
+      setRetailVatRate(vatRate);
+      setRetailVatDraft(
+        vatRate === null ? "" : vatRate.toFixed(2)
+      );
+    } finally {
+      setRetailLoading(false);
+    }
+  }
+
+  function mapRetailSaleRow(r: any): RetailSaleRow {
+    const items: RetailSaleItemRow[] = (
+      r.retail_sale_items || []
+    )
+      .map((i: any) => ({
+        id: i.id,
+        line_no: Number(i.line_no || 0),
+        wine_id: i.wine_id,
+        producer_snapshot: i.producer_snapshot ?? null,
+        wine_name_snapshot: i.wine_name_snapshot ?? null,
+        cuvee_snapshot: i.cuvee_snapshot ?? null,
+        vintage_snapshot: i.vintage_snapshot ?? null,
+        bottle_size_cl_snapshot:
+          i.bottle_size_cl_snapshot === null ||
+          i.bottle_size_cl_snapshot === undefined
+            ? null
+            : Number(i.bottle_size_cl_snapshot),
+        quantity: Number(i.quantity || 0),
+        vat_rate_percent: Number(i.vat_rate_percent || 0),
+        unit_price_ttc: Number(i.unit_price_ttc || 0),
+        line_total_ht: Number(i.line_total_ht || 0),
+        line_total_vat: Number(i.line_total_vat || 0),
+        line_total_ttc: Number(i.line_total_ttc || 0),
+        price_source: i.price_source || "LIST",
+      }))
+      .sort(
+        (a: RetailSaleItemRow, b: RetailSaleItemRow) =>
+          a.line_no - b.line_no
+      );
+
+    return {
+      id: r.id,
+      sale_number: r.sale_number,
+      sale_date: r.sale_date,
+      customer_name: r.customer_name ?? null,
+      status:
+        r.status === "CANCELLED" ? "CANCELLED" : "CONFIRMED",
+      total_bottles: Number(r.total_bottles || 0),
+      total_ht: Number(r.total_ht || 0),
+      total_vat: Number(r.total_vat || 0),
+      total_ttc: Number(r.total_ttc || 0),
+      payment_method: r.payment_method ?? null,
+      created_at: r.created_at,
+      cancelled_at: r.cancelled_at ?? null,
+      cancel_reason: r.cancel_reason ?? null,
+      items,
+    };
+  }
+
+  async function loadRetailSales(reset: boolean) {
+    if (retailSalesLoading) return;
+
+    setRetailSalesLoading(true);
+    setRetailSalesError("");
+
+    try {
+      const companyId =
+        await getCurrentCompanyIdForInventory();
+
+      const offset = reset ? 0 : retailSales.length;
+
+      const { data, error } = await supabase
+        .from("retail_sales")
+        .select(
+          "id, sale_number, sale_date, customer_name, status, total_bottles, total_ht, total_vat, total_ttc, payment_method, created_at, cancelled_at, cancel_reason, retail_sale_items(id, line_no, wine_id, producer_snapshot, wine_name_snapshot, cuvee_snapshot, vintage_snapshot, bottle_size_cl_snapshot, quantity, vat_rate_percent, unit_price_ttc, line_total_ht, line_total_vat, line_total_ttc, price_source)"
+        )
+        .eq("company_id", companyId)
+        .order("sale_date", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(offset, offset + RETAIL_SALES_PAGE_SIZE - 1);
+
+      if (error) {
+        throw error;
+      }
+
+      const rows = (data || []).map(mapRetailSaleRow);
+
+      setRetailSales((prev) =>
+        reset ? rows : [...prev, ...rows]
+      );
+
+      setRetailSalesHasMore(
+        rows.length === RETAIL_SALES_PAGE_SIZE
+      );
+    } catch (error: any) {
+      setRetailSalesError(
+        tUi("retailHistoryLoadFailed", {
+          error: error?.message || tApp("unknownError"),
+        })
+      );
+    } finally {
+      setRetailSalesLoading(false);
+    }
+  }
+
+  /*
+   * 販売確定・取消の後に、Section 19と在庫を表示している
+   * 既存Section（4/7/9/17）を再読み込みする。
+   */
+  async function refreshAfterRetailChange() {
+    await Promise.all([
+      loadRetailSaleData(),
+      loadRetailSales(true),
+    ]);
+
+    await loadCloudInventory();
+    await loadWineList();
+    await loadStockHistoryPage(true);
+    await loadStockAlertData();
+  }
+
+  async function saveRetailVatRate() {
+    if (!isOwnerRole || retailVatSaving) {
+      return;
+    }
+
+    const normalized = retailVatDraft
+      .trim()
+      .replace(",", ".");
+
+    if (!/^\d{1,2}(\.\d{1,2})?$/.test(normalized)) {
+      alert(tUi("retailVatInvalid"));
+      return;
+    }
+
+    const rate = Number(normalized);
+
+    if (!Number.isFinite(rate) || rate < 0 || rate >= 100) {
+      alert(tUi("retailVatInvalid"));
+      return;
+    }
+
+    if (
+      !confirm(
+        tUi("retailVatSaveConfirm", {
+          rate: rate.toFixed(2),
+        })
+      )
+    ) {
+      return;
+    }
+
+    setRetailVatSaving(true);
+
+    try {
+      const companyId =
+        await getCurrentCompanyIdForInventory();
+
+      const { data, error } = await supabase
+        .from("retail_sale_settings")
+        .upsert(
+          {
+            company_id: companyId,
+            vat_rate_percent: rate,
+          },
+          { onConflict: "company_id" }
+        )
+        .select("vat_rate_percent")
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      const saved =
+        data?.vat_rate_percent === null ||
+        data?.vat_rate_percent === undefined
+          ? null
+          : Number(data.vat_rate_percent);
+
+      setRetailVatRate(saved);
+      setRetailVatDraft(
+        saved === null ? "" : saved.toFixed(2)
+      );
+
+      alert(
+        tUi("retailVatSaved", {
+          rate: saved === null ? "—" : saved.toFixed(2),
+        })
+      );
+    } catch (error: any) {
+      alert(
+        tUi("retailVatSaveFailed", {
+          error: error?.message || tApp("unknownError"),
+        })
+      );
+    } finally {
+      setRetailVatSaving(false);
+    }
+  }
+
+  function addRetailProductToCart(product: RetailProductRow) {
+    if (isViewerRole || retailSubmitting) {
+      return;
+    }
+
+    const listPrice = product.salePrice;
+
+    if (listPrice === null || !(listPrice > 0)) {
+      alert(tUi("retailPriceNotSetAlert"));
+      return;
+    }
+
+    setRetailCart((prev) => {
+      const existing = prev.find(
+        (line) => line.wineId === product.wineId
+      );
+
+      if (existing) {
+        if (existing.quantity >= product.currentQuantity) {
+          return prev;
+        }
+
+        return prev.map((line) =>
+          line.wineId === product.wineId
+            ? { ...line, quantity: line.quantity + 1 }
+            : line
+        );
+      }
+
+      return [
+        ...prev,
+        {
+          wineId: product.wineId,
+          producer: product.producer,
+          wineName: product.wineName,
+          cuvee: product.cuvee,
+          vintage: product.vintage,
+          bottleSizeCl: product.bottleSizeCl,
+          quantity: 1,
+          listPrice,
+          unitPriceDraft: listPrice.toFixed(2),
+        },
+      ];
+    });
+  }
+
+  function setRetailCartQuantity(
+    wineId: string,
+    nextQuantity: number
+  ) {
+    if (isViewerRole || retailSubmitting) {
+      return;
+    }
+
+    const stock =
+      retailProductMap.get(wineId)?.currentQuantity ?? 0;
+
+    const maxQuantity = Math.max(1, Math.floor(stock));
+
+    const clamped = Math.min(
+      Math.max(1, Math.floor(nextQuantity || 1)),
+      maxQuantity
+    );
+
+    setRetailCart((prev) =>
+      prev.map((line) =>
+        line.wineId === wineId
+          ? { ...line, quantity: clamped }
+          : line
+      )
+    );
+  }
+
+  function updateRetailCartPrice(
+    wineId: string,
+    draft: string
+  ) {
+    if (isViewerRole || retailSubmitting) {
+      return;
+    }
+
+    setRetailCart((prev) =>
+      prev.map((line) =>
+        line.wineId === wineId
+          ? { ...line, unitPriceDraft: draft }
+          : line
+      )
+    );
+  }
+
+  function resetRetailCartPrice(wineId: string) {
+    setRetailCart((prev) =>
+      prev.map((line) =>
+        line.wineId === wineId
+          ? {
+              ...line,
+              unitPriceDraft: line.listPrice.toFixed(2),
+            }
+          : line
+      )
+    );
+  }
+
+  function removeRetailCartLine(wineId: string) {
+    if (retailSubmitting) {
+      return;
+    }
+
+    setRetailCart((prev) =>
+      prev.filter((line) => line.wineId !== wineId)
+    );
+  }
+
+  function retailWineLabel(parts: {
+    producer?: string | null;
+    wineName?: string | null;
+    cuvee?: string | null;
+    vintage?: string | null;
+  }) {
+    return [
+      parts.producer,
+      parts.wineName || parts.cuvee,
+      parts.vintage,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+  }
+
+  /*
+   * RPCのraise exception（'RETAIL_XXX' / 'RETAIL_XXX:<id>'）を
+   * 画面用の文言へ変換する。未知のエラーはメッセージをそのまま出す。
+   */
+  function retailErrorMessage(error: any): string {
+    const message = String(error?.message || "");
+    const code = message.split(":")[0].trim();
+
+    if (code === "RETAIL_INSUFFICIENT_STOCK") {
+      const wineId = message.slice(code.length + 1).trim();
+      const product = retailProductMap.get(wineId);
+      const cartLine = retailCart.find(
+        (line) => line.wineId === wineId
+      );
+
+      return tUi("retailErrStock", {
+        wine:
+          retailWineLabel(product || cartLine || {}) ||
+          wineId ||
+          "—",
+      });
+    }
+
+    const keyByCode: Record<string, ExtraUiI18nKey> = {
+      RETAIL_NOT_AUTHENTICATED: "retailErrNotAuthenticated",
+      RETAIL_FORBIDDEN: "retailErrForbidden",
+      RETAIL_VAT_RATE_NOT_SET: "retailBlockedVat",
+      RETAIL_SALE_DATE_REQUIRED: "retailBlockedDate",
+      RETAIL_SALE_DATE_IN_FUTURE: "retailBlockedDate",
+      RETAIL_WINE_NOT_AVAILABLE: "retailErrWineUnavailable",
+      RETAIL_INVALID_PRICE: "retailBlockedPrice",
+      RETAIL_INVALID_QUANTITY: "retailErrInvalidQuantity",
+      RETAIL_DUPLICATE_WINE: "retailErrInvalidQuantity",
+      RETAIL_ITEMS_EMPTY: "retailBlockedEmpty",
+      RETAIL_TOO_MANY_ITEMS: "retailErrTooManyItems",
+      RETAIL_CUSTOMER_NAME_TOO_LONG: "retailErrCustomerTooLong",
+      RETAIL_SALE_ALREADY_CANCELLED: "retailErrAlreadyCancelled",
+      RETAIL_SALE_NOT_FOUND: "retailErrSaleNotFound",
+      RETAIL_CANCEL_REASON_TOO_LONG: "retailCancelReasonTooLong",
+      RETAIL_MOVEMENT_MISMATCH: "retailErrMovementMismatch",
+    };
+
+    const key = keyByCode[code];
+
+    if (key) {
+      return tUi(key);
+    }
+
+    return message || tApp("unknownError");
+  }
+
+  async function confirmRetailSale() {
+    if (retailSubmittingRef.current) {
+      return;
+    }
+
+    if (retailBlockingReasonKey) {
+      alert(tUi(retailBlockingReasonKey));
+      return;
+    }
+
+    const totalLabel = formatRetailEuro(
+      retailCartTotals.ttcCents / 100
+    );
+
+    if (
+      !confirm(
+        tUi("retailConfirmDialog", {
+          lines: retailCartView.length,
+          qty: retailCartTotals.bottles,
+          total: totalLabel,
+        })
+      )
+    ) {
+      return;
+    }
+
+    retailSubmittingRef.current = true;
+    setRetailSubmitting(true);
+
+    try {
+      const items = retailCartView.map((view) => ({
+        wine_id: view.line.wineId,
+        quantity: view.line.quantity,
+        unit_price_ttc: view.price,
+        price_source: view.priceSource,
+      }));
+
+      const { data, error } = await supabase.rpc(
+        "confirm_retail_sale",
+        {
+          p_client_request_id: retailClientRequestId,
+          p_sale_date: retailSaleDate,
+          p_customer_name:
+            retailCustomerName.trim() || null,
+          p_payment_method: retailPaymentMethod || null,
+          p_items: items,
+        }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      const row: any = Array.isArray(data) ? data[0] : data;
+
+      if (!row?.sale_id || !row?.sale_number) {
+        throw new Error(tUi("retailConfirmNoResult"));
+      }
+
+      const saleNumber = String(row.sale_number);
+      const totalTtc = Number(row.total_ttc || 0);
+      const alreadyExisted = Boolean(row.already_existed);
+
+      // 成功した時だけ冪等キーを更新し、カートをクリアする。
+      setRetailClientRequestId(generateClientRequestId());
+      setRetailCart([]);
+      setRetailCustomerName("");
+      setRetailPaymentMethod("");
+      setRetailLastSale({
+        saleId: String(row.sale_id),
+        saleNumber,
+        totalTtc,
+        alreadyExisted,
+      });
+
+      alert(
+        alreadyExisted
+          ? tUi("retailConfirmAlreadyExisted", {
+              number: saleNumber,
+            })
+          : tUi("retailConfirmSuccess", {
+              number: saleNumber,
+              total: formatRetailEuro(totalTtc),
+            })
+      );
+
+      await refreshAfterRetailChange();
+    } catch (error: any) {
+      console.error("店頭販売確定エラー:", error);
+
+      alert(
+        tUi("retailConfirmFailed", {
+          error: retailErrorMessage(error),
+        })
+      );
+    } finally {
+      retailSubmittingRef.current = false;
+      setRetailSubmitting(false);
+    }
+  }
+
+  async function cancelRetailSale(sale: RetailSaleRow) {
+    if (!isOwnerRole) {
+      alert(tUi("retailCancelOwnerOnly"));
+      return;
+    }
+
+    if (
+      sale.status !== "CONFIRMED" ||
+      retailCancellingSaleId
+    ) {
+      return;
+    }
+
+    const reason = prompt(
+      tUi("retailCancelReasonPrompt", {
+        number: sale.sale_number,
+      }),
+      ""
+    );
+
+    if (reason === null) {
+      return;
+    }
+
+    if (reason.trim().length > 500) {
+      alert(tUi("retailCancelReasonTooLong"));
+      return;
+    }
+
+    if (
+      !confirm(
+        tUi("retailCancelConfirm", {
+          number: sale.sale_number,
+          qty: sale.total_bottles,
+        })
+      )
+    ) {
+      return;
+    }
+
+    setRetailCancellingSaleId(sale.id);
+
+    try {
+      const { data, error } = await supabase.rpc(
+        "cancel_retail_sale",
+        {
+          p_sale_id: sale.id,
+          p_reason: reason.trim() || null,
+        }
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      const row: any = Array.isArray(data) ? data[0] : data;
+      const skipped = Number(row?.skipped_lines || 0);
+
+      alert(
+        skipped > 0
+          ? tUi("retailCancelSuccessSkipped", {
+              number: sale.sale_number,
+              skipped,
+            })
+          : tUi("retailCancelSuccess", {
+              number: sale.sale_number,
+            })
+      );
+
+      await refreshAfterRetailChange();
+    } catch (error: any) {
+      console.error("店頭販売取消エラー:", error);
+
+      alert(
+        tUi("retailCancelFailed", {
+          error: retailErrorMessage(error),
+        })
+      );
+    } finally {
+      setRetailCancellingSaleId(null);
+    }
+  }
+
+  function formatRetailSaleDate(isoDate: string) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(
+      isoDate || ""
+    );
+
+    return match
+      ? `${match[3]}/${match[2]}/${match[1]}`
+      : isoDate || "—";
+  }
+
+  function retailPaymentMethodLabel(
+    method: string | null
+  ): string {
+    if (method === "CASH") return tUi("retailPaymentCash");
+    if (method === "CARD") return tUi("retailPaymentCard");
+    if (method === "OTHER") return tUi("retailPaymentOther");
+    return "—";
+  }
+
+  /*
+   * A4販売伝票（フランス語＋日本語併記）。
+   * 内容は retail_sales / retail_sale_items のDB値・スナップショット列
+   * だけを使い、現在のwines情報には依存しない。
+   * iPad Safariのポップアップブロックを避けるため、window.openは
+   * クリック処理の中で最初に同期的に呼ぶ（データは取得済み）。
+   */
+  function printRetailSaleSlip(sale: RetailSaleRow) {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const printWindow = window.open(
+      "",
+      "_blank",
+      "width=900,height=1200"
+    );
+
+    if (!printWindow) {
+      alert(tUi("retailPrintWindowBlocked"));
+      return;
+    }
+
+    const escapeHtml = (value: unknown) =>
+      String(value ?? "").replace(
+        /[&<>"']/g,
+        (char) =>
+          (
+            {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            } as Record<string, string>
+          )[char]
+      );
+
+    const money = (value: number) =>
+      escapeHtml(formatRetailEuro(Number(value || 0)));
+
+    const issuerName = (currentCompanyName || "").trim();
+    const shopTitle = wineListHeaderTitle.trim();
+    const showShopTitle =
+      Boolean(shopTitle) &&
+      shopTitle.toUpperCase() !== issuerName.toUpperCase();
+
+    const customer =
+      (sale.customer_name || "").trim() ||
+      RETAIL_WALK_IN_CUSTOMER_LABEL;
+
+    const paymentLabels: Record<string, string> = {
+      CASH: "Espèces / 現金",
+      CARD: "Carte / カード",
+      OTHER: "Autre / その他",
+    };
+
+    const vatRates = Array.from(
+      new Set(
+        sale.items.map((item) =>
+          Number(item.vat_rate_percent).toFixed(2)
+        )
+      )
+    );
+
+    const vatLabel = vatRates
+      .map((rate) => `${rate.replace(".", ",")} %`)
+      .join(" / ");
+
+    const itemRows = sale.items
+      .map((item) => {
+        const name = [
+          item.producer_snapshot,
+          item.wine_name_snapshot || item.cuvee_snapshot,
+        ]
+          .filter(Boolean)
+          .join(" — ");
+
+        const cuveeLine =
+          item.cuvee_snapshot &&
+          item.wine_name_snapshot &&
+          item.cuvee_snapshot.trim().toUpperCase() !==
+            item.wine_name_snapshot.trim().toUpperCase()
+            ? `<div class="sub">${escapeHtml(item.cuvee_snapshot)}</div>`
+            : "";
+
+        const size =
+          item.bottle_size_cl_snapshot &&
+          Number(item.bottle_size_cl_snapshot) !== 75
+            ? ` <span class="sub">(${escapeHtml(
+                item.bottle_size_cl_snapshot
+              )} cl)</span>`
+            : "";
+
+        return `<tr>
+          <td class="num">${escapeHtml(item.quantity)}</td>
+          <td>${escapeHtml(name || "—")}${size}${cuveeLine}</td>
+          <td class="center">${escapeHtml(item.vintage_snapshot || "—")}</td>
+          <td class="num">${money(item.unit_price_ttc)}</td>
+          <td class="num">${money(item.line_total_ttc)}</td>
+        </tr>`;
+      })
+      .join("");
+
+    const isCancelled = sale.status === "CANCELLED";
+
+    const cancelledBanner = isCancelled
+      ? `<div class="cancel-banner">
+          ANNULÉ / 取消済み
+          ${
+            sale.cancelled_at
+              ? `<span>— ${escapeHtml(
+                  new Date(sale.cancelled_at).toLocaleString("fr-FR", {
+                    timeZone: "Europe/Paris",
+                  })
+                )}</span>`
+              : ""
+          }
+          ${
+            sale.cancel_reason
+              ? `<div class="cancel-reason">Motif / 理由 : ${escapeHtml(
+                  sale.cancel_reason
+                )}</div>`
+              : ""
+          }
+        </div>`
+      : "";
+
+    printWindow.document.open();
+    printWindow.document.write(`<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>${escapeHtml(sale.sale_number)}</title>
+<style>
+  @page { size: A4 portrait; margin: 14mm 14mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic", sans-serif;
+    color: #241c15;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet { position: relative; max-width: 182mm; margin: 0 auto; padding: 4mm 0; }
+  .watermark {
+    position: fixed; top: 40%; left: 0; right: 0;
+    text-align: center; font-size: 64pt; font-weight: 800;
+    color: rgba(185, 28, 28, 0.16); transform: rotate(-24deg);
+    pointer-events: none; z-index: 0; white-space: nowrap;
+  }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8mm; border-bottom: 2px solid #241c15; padding-bottom: 4mm; }
+  .issuer { font-size: 15pt; font-weight: 800; letter-spacing: 0.02em; }
+  .shop { margin-top: 1mm; font-size: 10.5pt; font-style: italic; color: #57534e; }
+  .doc-title { text-align: right; }
+  .doc-title .t1 { font-size: 15pt; font-weight: 800; }
+  .doc-title .t2 { font-size: 10pt; color: #57534e; }
+  .meta { margin-top: 5mm; display: grid; grid-template-columns: 1fr 1fr; gap: 2mm 8mm; font-size: 10.5pt; }
+  .meta .label { color: #78716c; font-size: 9pt; }
+  .meta .value { font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin-top: 6mm; position: relative; z-index: 1; }
+  th { text-align: left; font-size: 8.5pt; color: #57534e; border-bottom: 1px solid #a8a29e; padding: 2mm 1.5mm; font-weight: 700; }
+  td { padding: 2.2mm 1.5mm; border-bottom: 1px solid #e7e5e4; vertical-align: top; font-size: 10.5pt; }
+  .num { text-align: right; white-space: nowrap; }
+  .center { text-align: center; white-space: nowrap; }
+  .sub { font-size: 8.5pt; color: #78716c; }
+  .totals { margin-top: 5mm; margin-left: auto; width: 82mm; font-size: 10.5pt; position: relative; z-index: 1; }
+  .totals .row { display: flex; justify-content: space-between; padding: 1.4mm 0; }
+  .totals .grand { border-top: 2px solid #241c15; margin-top: 1mm; padding-top: 2mm; font-size: 13pt; font-weight: 800; }
+  .cancel-banner { margin-top: 5mm; border: 2px solid #b91c1c; color: #b91c1c; font-weight: 800; padding: 2.5mm 3mm; font-size: 12pt; }
+  .cancel-banner span { font-weight: 600; font-size: 10pt; }
+  .cancel-reason { font-weight: 600; font-size: 9.5pt; margin-top: 1mm; }
+  footer { margin-top: 10mm; font-size: 8.5pt; color: #78716c; border-top: 1px solid #e7e5e4; padding-top: 3mm; }
+</style>
+</head>
+<body>
+  ${isCancelled ? '<div class="watermark">ANNULÉ / 取消済み</div>' : ""}
+  <div class="sheet">
+    <header>
+      <div>
+        <div class="issuer">${escapeHtml(issuerName || "—")}</div>
+        ${showShopTitle ? `<div class="shop">${escapeHtml(shopTitle)}</div>` : ""}
+      </div>
+      <div class="doc-title">
+        <div class="t1">Ticket de vente</div>
+        <div class="t2">販売伝票</div>
+      </div>
+    </header>
+
+    ${cancelledBanner}
+
+    <div class="meta">
+      <div>
+        <div class="label">N° de ticket / 伝票番号</div>
+        <div class="value">${escapeHtml(sale.sale_number)}</div>
+      </div>
+      <div>
+        <div class="label">Date de vente / 販売日</div>
+        <div class="value">${escapeHtml(formatRetailSaleDate(sale.sale_date))}</div>
+      </div>
+      <div>
+        <div class="label">Client / 顧客</div>
+        <div class="value">${escapeHtml(customer)}</div>
+      </div>
+      ${
+        sale.payment_method
+          ? `<div>
+        <div class="label">Mode de paiement (indicatif) / 支払方法（参考）</div>
+        <div class="value">${escapeHtml(
+          paymentLabels[sale.payment_method] || sale.payment_method
+        )}</div>
+      </div>`
+          : ""
+      }
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="num" style="width:14mm">Qté<br />数量</th>
+          <th>Désignation<br />商品</th>
+          <th class="center" style="width:20mm">Millésime<br />Vintage</th>
+          <th class="num" style="width:28mm">PU TTC<br />単価TTC</th>
+          <th class="num" style="width:30mm">Total TTC<br />小計TTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemRows}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div class="row"><span>Nombre de bouteilles / 本数</span><span>${escapeHtml(sale.total_bottles)}</span></div>
+      <div class="row"><span>Total HT / 合計HT</span><span>${money(sale.total_ht)}</span></div>
+      <div class="row"><span>TVA ${escapeHtml(vatLabel)} / 消費税</span><span>${money(sale.total_vat)}</span></div>
+      <div class="row grand"><span>Total TTC / 合計TTC</span><span>${money(sale.total_ttc)}</span></div>
+    </div>
+
+    <footer>
+      Ce ticket n'est pas une facture. / 本伝票は請求書（Facture）ではありません。
+    </footer>
+  </div>
+</body>
+</html>`);
+
+    printWindow.document.close();
+
+    const runPrint = () => {
+      printWindow.focus();
+
+      window.setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    };
+
+    if (printWindow.document.readyState === "complete") {
+      runPrint();
+    } else {
+      printWindow.addEventListener("load", runPrint, {
+        once: true,
+      });
+    }
+  }
+
   const totalQty = inventory.reduce((s, r) => s + Number(r.qty || 0), 0);
   const totalHT = inventory.reduce((s, r) => s + Number(r.amount || 0), 0);
   const needsCheck = inventory.filter((r) => r.status === "NEEDS_CHECK").length;
@@ -15583,6 +17210,119 @@ const isViewerRole =
   currentCustomerRole === "viewer";
 
 const isOwnerRole = currentCustomerRole === "owner";
+
+  /*
+   * Section 19: 画面用の派生値。
+   * 在庫数は常に最新のretailProducts（inventory_view）から引くため、
+   * 再読み込みで在庫が減った場合もカート側で超過を検知できる。
+   */
+  const retailProductMap = new Map<string, RetailProductRow>();
+  retailProducts.forEach((product) => {
+    retailProductMap.set(product.wineId, product);
+  });
+
+  const retailParisToday = parisTodayIsoDate();
+
+  const retailSearchTokens = normalizeSoldBottleText(
+    retailSearch
+  )
+    .split(" ")
+    .filter(Boolean);
+
+  const retailMatchedProducts =
+    retailSearchTokens.length === 0
+      ? retailProducts
+      : retailProducts.filter((product) =>
+          retailSearchTokens.every((token) =>
+            product.searchText.includes(token)
+          )
+        );
+
+  const retailVisibleProducts = retailMatchedProducts.slice(
+    0,
+    RETAIL_PRODUCT_DISPLAY_LIMIT
+  );
+
+  const retailCartQuantityByWineId: Record<string, number> = {};
+  retailCart.forEach((line) => {
+    retailCartQuantityByWineId[line.wineId] = line.quantity;
+  });
+
+  const retailCartView = retailCart.map((line) => {
+    const stock =
+      retailProductMap.get(line.wineId)?.currentQuantity ?? 0;
+    const price = parseRetailPrice(line.unitPriceDraft);
+    const priceSource: "LIST" | "MANUAL" =
+      price !== null &&
+      Math.round(price * 100) === Math.round(line.listPrice * 100)
+        ? "LIST"
+        : "MANUAL";
+
+    return {
+      line,
+      stock,
+      price,
+      priceSource,
+      overStock: line.quantity > stock,
+      estimate:
+        price === null
+          ? null
+          : retailLineEstimateCents(
+              price,
+              line.quantity,
+              retailVatRate
+            ),
+    };
+  });
+
+  const retailCartTotals = retailCartView.reduce(
+    (acc, view) => {
+      acc.bottles += view.line.quantity;
+
+      if (view.estimate) {
+        acc.ttcCents += view.estimate.ttc;
+
+        if (
+          acc.htCents !== null &&
+          view.estimate.ht !== null &&
+          view.estimate.vat !== null
+        ) {
+          acc.htCents += view.estimate.ht;
+          acc.vatCents = (acc.vatCents ?? 0) + view.estimate.vat;
+        } else {
+          acc.htCents = null;
+          acc.vatCents = null;
+        }
+      } else {
+        acc.complete = false;
+      }
+
+      return acc;
+    },
+    {
+      bottles: 0,
+      ttcCents: 0,
+      htCents: 0 as number | null,
+      vatCents: 0 as number | null,
+      complete: true,
+    }
+  );
+
+  const retailBlockingReasonKey: ExtraUiI18nKey | null =
+    isViewerRole
+      ? "retailViewerReadOnly"
+      : retailVatRate === null
+        ? "retailBlockedVat"
+        : retailCart.length === 0
+          ? "retailBlockedEmpty"
+          : retailCartView.some((view) => view.price === null)
+            ? "retailBlockedPrice"
+            : retailCartView.some((view) => view.overStock)
+              ? "retailBlockedStock"
+              : !retailSaleDate ||
+                  retailSaleDate > retailParisToday
+                ? "retailBlockedDate"
+                : null;
 
 const CUSTOMER_CONTRACT_LABEL_KEYS: Record<
   string,
@@ -22246,12 +23986,17 @@ const soldBottleCanApply =
                   m.id
                 );
 
+              const isRetailSaleMovement =
+                m.movement_type === "SALE" &&
+                isRetailSaleMovementNotes(m.notes);
+
               const canReverse =
                 (m.movement_type ===
                   "SALE" ||
                   m.movement_type ===
                     "ADJUSTMENT") &&
-                !isReversed;
+                !isReversed &&
+                !isRetailSaleMovement;
 
               const isReversing =
                 reversingMovementId === m.id;
@@ -22415,6 +24160,12 @@ const soldBottleCanApply =
                         <span className="text-[10px] font-bold text-stone-400">
                           {tUi(
                             "stockHistoryUndone"
+                          )}
+                        </span>
+                      ) : isRetailSaleMovement ? (
+                        <span className="text-right text-[10px] leading-tight text-stone-500">
+                          {tUi(
+                            "retailSection9UndoGuide"
                           )}
                         </span>
                       ) : (
@@ -22916,6 +24667,886 @@ const soldBottleCanApply =
                 </div>
               );
             })
+          )}
+        </div>
+      </section>
+
+      {/*
+        Section 19「店頭販売 / Vente au comptoir」。
+        iPad操作を前提に、主要ボタンは44px(min-h-11)以上。
+        閲覧は全role。販売確定はowner/staff、取消とTVA率変更はownerのみ
+        （UIは誤操作防止で、実際の権限境界はRPC/RLS側）。
+      */}
+      <section className="card mt-4 p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="max-w-4xl">
+            <h2 className="text-xl font-bold">
+              {tUi("retailSectionTitle")}
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-600">
+              {tUi("retailSectionDescription")}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-secondary min-h-11"
+            onClick={() => {
+              loadRetailSaleData();
+              loadRetailSales(true);
+            }}
+            disabled={retailLoading || retailSubmitting}
+          >
+            {retailLoading
+              ? tUi("retailLoading")
+              : tUi("retailRefresh")}
+          </button>
+        </div>
+
+        {retailLoadError && (
+          <div className="mt-3 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {retailLoadError}
+          </div>
+        )}
+
+        {isViewerRole && (
+          <div className="mt-3 rounded-lg border border-stone-300 bg-stone-50 px-3 py-2 text-sm text-stone-600">
+            {tUi("retailViewerReadOnly")}
+          </div>
+        )}
+
+        {/* TVA率 + 販売情報 */}
+        <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-stone-200 bg-stone-50 p-3">
+            <label className="block text-xs font-bold text-stone-600">
+              {tUi("retailVatRateLabel")}
+            </label>
+
+            {isOwnerRole ? (
+              <div className="mt-1 flex items-center gap-2">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  className="input min-h-11 w-24 text-base"
+                  value={retailVatDraft}
+                  placeholder="—"
+                  onChange={(e) =>
+                    setRetailVatDraft(e.target.value)
+                  }
+                  disabled={retailVatSaving}
+                />
+                <span className="text-sm font-bold">%</span>
+                <button
+                  type="button"
+                  className="btn btn-primary min-h-11"
+                  onClick={saveRetailVatRate}
+                  disabled={
+                    retailVatSaving ||
+                    retailVatDraft.trim() ===
+                      (retailVatRate === null
+                        ? ""
+                        : retailVatRate.toFixed(2))
+                  }
+                >
+                  {retailVatSaving
+                    ? tUi("retailVatSaving")
+                    : tUi("retailVatSave")}
+                </button>
+              </div>
+            ) : (
+              <div className="mt-1 flex min-h-11 items-center text-lg font-bold">
+                {retailVatRate === null
+                  ? "—"
+                  : `${retailVatRate.toFixed(2)} %`}
+              </div>
+            )}
+
+            {retailVatRate === null ? (
+              <p className="mt-1 text-xs font-bold text-red-700">
+                {tUi("retailVatNotSet")}
+              </p>
+            ) : (
+              !isOwnerRole && (
+                <p className="mt-1 text-[11px] text-stone-500">
+                  {tUi("retailVatOwnerOnly")}
+                </p>
+              )
+            )}
+          </div>
+
+          <div className="rounded-xl border border-stone-200 p-3">
+            <label className="block text-xs font-bold text-stone-600">
+              {tUi("retailSaleDateLabel")}
+            </label>
+            <input
+              type="date"
+              className="input mt-1 min-h-11 w-full text-base"
+              value={retailSaleDate}
+              max={retailParisToday}
+              onChange={(e) =>
+                setRetailSaleDate(e.target.value)
+              }
+              disabled={isViewerRole || retailSubmitting}
+            />
+            {retailSaleDate > retailParisToday && (
+              <p className="mt-1 text-xs font-bold text-red-700">
+                {tUi("retailBlockedDate")}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-stone-200 p-3">
+            <label className="block text-xs font-bold text-stone-600">
+              {tUi("retailCustomerLabel")}
+            </label>
+            <input
+              type="text"
+              className="input mt-1 min-h-11 w-full text-base"
+              value={retailCustomerName}
+              maxLength={200}
+              placeholder={RETAIL_WALK_IN_CUSTOMER_LABEL}
+              onChange={(e) =>
+                setRetailCustomerName(e.target.value)
+              }
+              disabled={isViewerRole || retailSubmitting}
+            />
+          </div>
+
+          <div className="rounded-xl border border-stone-200 p-3">
+            <label className="block text-xs font-bold text-stone-600">
+              {tUi("retailPaymentLabel")}
+            </label>
+            <div className="mt-1 grid grid-cols-4 gap-1">
+              {(
+                [
+                  ["", "retailPaymentNone"],
+                  ["CASH", "retailPaymentCash"],
+                  ["CARD", "retailPaymentCard"],
+                  ["OTHER", "retailPaymentOther"],
+                ] as Array<[RetailPaymentMethod, ExtraUiI18nKey]>
+              ).map(([value, labelKey]) => (
+                <button
+                  key={value || "NONE"}
+                  type="button"
+                  aria-pressed={retailPaymentMethod === value}
+                  className={
+                    "min-h-11 rounded-xl border px-1 text-xs font-bold disabled:opacity-50 " +
+                    (retailPaymentMethod === value
+                      ? "border-stone-900 bg-stone-900 text-white"
+                      : "border-stone-300 bg-white text-stone-700")
+                  }
+                  onClick={() =>
+                    setRetailPaymentMethod(value)
+                  }
+                  disabled={isViewerRole || retailSubmitting}
+                >
+                  {tUi(labelKey)}
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 text-[10px] leading-snug text-stone-400">
+              {tUi("retailPaymentNote")}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          {/* 商品検索 */}
+          <div className="rounded-xl border border-stone-200 p-3">
+            <h3 className="text-base font-bold">
+              {tUi("retailSearchTitle")}
+            </h3>
+
+            <input
+              type="search"
+              className="input mt-2 min-h-11 w-full text-base"
+              value={retailSearch}
+              placeholder={tUi("retailSearchPlaceholder")}
+              onChange={(e) => setRetailSearch(e.target.value)}
+            />
+
+            <p className="mt-1 text-xs text-stone-500">
+              {tUi("retailSearchCount", {
+                shown: retailVisibleProducts.length,
+                total: retailMatchedProducts.length,
+              })}
+            </p>
+
+            <div className="mt-2 max-h-[60vh] space-y-2 overflow-y-auto pr-1">
+              {retailLoading && retailProducts.length === 0 ? (
+                <p className="py-6 text-center text-sm text-stone-500">
+                  {tUi("retailLoading")}
+                </p>
+              ) : retailVisibleProducts.length === 0 ? (
+                <p className="py-6 text-center text-sm text-stone-500">
+                  {tUi("retailNoProducts")}
+                </p>
+              ) : (
+                retailVisibleProducts.map((product) => {
+                  const inCart =
+                    retailCartQuantityByWineId[product.wineId] || 0;
+                  const hasPrice = product.salePrice !== null;
+                  const atMax =
+                    inCart >= product.currentQuantity;
+
+                  return (
+                    <div
+                      key={product.wineId}
+                      className={
+                        "flex items-center gap-3 rounded-xl border p-2 " +
+                        (inCart > 0
+                          ? "border-emerald-300 bg-emerald-50"
+                          : "border-stone-200 bg-white")
+                      }
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-bold">
+                          {product.producer || "—"}
+                        </div>
+                        <div className="truncate text-sm">
+                          {product.wineName || product.cuvee || "—"}
+                          {product.vintage
+                            ? ` ${product.vintage}`
+                            : ""}
+                          {product.bottleSizeCl !== 75
+                            ? ` (${product.bottleSizeCl} cl)`
+                            : ""}
+                        </div>
+                        <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-stone-500">
+                          {product.region && (
+                            <span>{product.region}</span>
+                          )}
+                          <span>
+                            {tUi("retailStockLabel", {
+                              qty: product.currentQuantity,
+                            })}
+                          </span>
+                          {inCart > 0 && (
+                            <span className="font-bold text-emerald-700">
+                              {tUi("retailInCart", {
+                                qty: inCart,
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        {hasPrice ? (
+                          <div className="text-sm font-bold">
+                            {formatRetailEuro(
+                              product.salePrice as number
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-xs font-bold text-amber-700">
+                            {tUi("retailPriceNotSet")}
+                          </div>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="btn btn-primary min-h-11 min-w-11 shrink-0 !px-3"
+                        onClick={() =>
+                          addRetailProductToCart(product)
+                        }
+                        disabled={
+                          isViewerRole ||
+                          retailSubmitting ||
+                          !hasPrice ||
+                          atMax
+                        }
+                        title={
+                          !hasPrice
+                            ? tUi("retailPriceNotSetAlert")
+                            : undefined
+                        }
+                        aria-label={tUi("retailAddToCart")}
+                      >
+                        ＋
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* カート */}
+          <div className="rounded-xl border border-stone-200 p-3">
+            <h3 className="text-base font-bold">
+              {tUi("retailCartTitle")}
+            </h3>
+
+            {retailCartView.length === 0 ? (
+              <p className="py-6 text-center text-sm text-stone-500">
+                {tUi("retailCartEmpty")}
+              </p>
+            ) : (
+              <div className="mt-2 space-y-2">
+                {retailCartView.map((view) => {
+                  const { line } = view;
+
+                  return (
+                    <div
+                      key={line.wineId}
+                      className={
+                        "rounded-xl border p-2 " +
+                        (view.overStock || view.price === null
+                          ? "border-red-300 bg-red-50"
+                          : "border-stone-200 bg-white")
+                      }
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-bold">
+                            {line.producer || "—"}
+                          </div>
+                          <div className="truncate text-sm">
+                            {line.wineName || line.cuvee || "—"}
+                            {line.vintage ? ` ${line.vintage}` : ""}
+                            {line.bottleSizeCl !== 75
+                              ? ` (${line.bottleSizeCl} cl)`
+                              : ""}
+                          </div>
+                          <div className="text-xs text-stone-500">
+                            {tUi("retailStockLabel", {
+                              qty: view.stock,
+                            })}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="min-h-11 min-w-11 shrink-0 rounded-xl border border-stone-300 bg-white px-2 text-xs font-bold text-red-700 disabled:opacity-50"
+                          onClick={() =>
+                            removeRetailCartLine(line.wineId)
+                          }
+                          disabled={retailSubmitting}
+                        >
+                          {tUi("retailRemoveLine")}
+                        </button>
+                      </div>
+
+                      <div className="mt-2 flex flex-wrap items-end gap-3">
+                        <div>
+                          <div className="text-[11px] font-bold text-stone-500">
+                            {tUi("retailColQty")}
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-1">
+                            <button
+                              type="button"
+                              className="h-11 w-11 rounded-xl border border-stone-300 bg-white text-xl font-bold disabled:opacity-40"
+                              onClick={() =>
+                                setRetailCartQuantity(
+                                  line.wineId,
+                                  line.quantity - 1
+                                )
+                              }
+                              disabled={
+                                isViewerRole ||
+                                retailSubmitting ||
+                                line.quantity <= 1
+                              }
+                              aria-label="−"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="number"
+                              inputMode="numeric"
+                              min={1}
+                              max={Math.max(1, view.stock)}
+                              className="input h-11 w-16 text-center text-base"
+                              value={line.quantity}
+                              onChange={(e) =>
+                                setRetailCartQuantity(
+                                  line.wineId,
+                                  Number(e.target.value)
+                                )
+                              }
+                              disabled={
+                                isViewerRole || retailSubmitting
+                              }
+                            />
+                            <button
+                              type="button"
+                              className="h-11 w-11 rounded-xl border border-stone-300 bg-white text-xl font-bold disabled:opacity-40"
+                              onClick={() =>
+                                setRetailCartQuantity(
+                                  line.wineId,
+                                  line.quantity + 1
+                                )
+                              }
+                              disabled={
+                                isViewerRole ||
+                                retailSubmitting ||
+                                line.quantity >= view.stock
+                              }
+                              aria-label="+"
+                            >
+                              ＋
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
+                            {tUi("retailColUnitPriceTtc")}
+                            <span
+                              className={
+                                "rounded px-1 text-[10px] " +
+                                (view.priceSource === "MANUAL"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : "bg-stone-100 text-stone-600")
+                              }
+                            >
+                              {view.priceSource === "MANUAL"
+                                ? tUi("retailManualPriceBadge")
+                                : tUi("retailListPriceBadge")}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-1">
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              className="input h-11 w-28 text-right text-base"
+                              value={line.unitPriceDraft}
+                              onChange={(e) =>
+                                updateRetailCartPrice(
+                                  line.wineId,
+                                  e.target.value
+                                )
+                              }
+                              disabled={
+                                isViewerRole || retailSubmitting
+                              }
+                            />
+                            <span className="text-sm">€</span>
+                            {view.priceSource === "MANUAL" && (
+                              <button
+                                type="button"
+                                className="min-h-11 rounded-xl border border-stone-300 bg-white px-2 text-[11px] font-bold text-stone-700 disabled:opacity-50"
+                                onClick={() =>
+                                  resetRetailCartPrice(line.wineId)
+                                }
+                                disabled={
+                                  isViewerRole || retailSubmitting
+                                }
+                              >
+                                {tUi("retailResetPrice", {
+                                  price: formatRetailEuro(
+                                    line.listPrice
+                                  ),
+                                })}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="ml-auto text-right">
+                          <div className="text-[11px] font-bold text-stone-500">
+                            {tUi("retailColLineTotalTtc")}
+                          </div>
+                          <div className="mt-0.5 flex min-h-11 items-center justify-end text-base font-bold">
+                            {view.estimate
+                              ? formatRetailEuro(
+                                  view.estimate.ttc / 100
+                                )
+                              : "—"}
+                          </div>
+                        </div>
+                      </div>
+
+                      {view.price === null && (
+                        <p className="mt-1 text-xs font-bold text-red-700">
+                          {tUi("retailBlockedPrice")}
+                        </p>
+                      )}
+
+                      {view.overStock && (
+                        <p className="mt-1 text-xs font-bold text-red-700">
+                          {tUi("retailLineOverStock", {
+                            stock: view.stock,
+                          })}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 合計 */}
+            <div className="mt-3 rounded-xl bg-stone-50 p-3 text-sm">
+              <div className="flex justify-between py-0.5">
+                <span>{tUi("retailTotalBottles")}</span>
+                <span className="font-bold">
+                  {retailCartTotals.bottles}
+                </span>
+              </div>
+              <div className="flex justify-between py-0.5 text-stone-600">
+                <span>{tUi("retailTotalHtEstimate")}</span>
+                <span>
+                  {retailCartTotals.htCents === null ||
+                  !retailCartTotals.complete
+                    ? "—"
+                    : formatRetailEuro(
+                        retailCartTotals.htCents / 100
+                      )}
+                </span>
+              </div>
+              <div className="flex justify-between py-0.5 text-stone-600">
+                <span>
+                  {tUi("retailTotalVatEstimate", {
+                    rate:
+                      retailVatRate === null
+                        ? "—"
+                        : retailVatRate.toFixed(2),
+                  })}
+                </span>
+                <span>
+                  {retailCartTotals.vatCents === null ||
+                  !retailCartTotals.complete
+                    ? "—"
+                    : formatRetailEuro(
+                        retailCartTotals.vatCents / 100
+                      )}
+                </span>
+              </div>
+              <div className="mt-1 flex justify-between border-t border-stone-300 pt-2 text-lg font-bold">
+                <span>{tUi("retailTotalTtc")}</span>
+                <span>
+                  {retailCartTotals.complete
+                    ? formatRetailEuro(
+                        retailCartTotals.ttcCents / 100
+                      )
+                    : "—"}
+                </span>
+              </div>
+              <p className="mt-1 text-[10px] text-stone-400">
+                {tUi("retailEstimateNote")}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-primary mt-3 min-h-12 w-full text-base"
+              onClick={confirmRetailSale}
+              disabled={
+                retailSubmitting ||
+                Boolean(retailBlockingReasonKey)
+              }
+            >
+              {retailSubmitting
+                ? tUi("retailConfirming")
+                : tUi("retailConfirmButton")}
+            </button>
+
+            {retailBlockingReasonKey &&
+              retailBlockingReasonKey !== "retailViewerReadOnly" &&
+              retailBlockingReasonKey !== "retailBlockedEmpty" && (
+                <p className="mt-1 text-center text-xs font-bold text-red-700">
+                  {tUi(retailBlockingReasonKey)}
+                </p>
+              )}
+
+            {retailLastSale && (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-emerald-300 bg-emerald-50 p-3">
+                <div className="text-sm">
+                  <div className="font-bold text-emerald-800">
+                    {retailLastSale.alreadyExisted
+                      ? tUi("retailLastSaleAlreadyExisted")
+                      : tUi("retailLastSaleTitle")}
+                  </div>
+                  <div className="text-lg font-bold">
+                    {retailLastSale.saleNumber}
+                  </div>
+                  <div className="text-stone-600">
+                    {formatRetailEuro(retailLastSale.totalTtc)}
+                  </div>
+                </div>
+                {(() => {
+                  const lastSaleId = retailLastSale.saleId;
+                  const lastSaleRow = retailSales.find(
+                    (sale) => sale.id === lastSaleId
+                  );
+
+                  return (
+                    <button
+                      type="button"
+                      className="btn btn-secondary min-h-11"
+                      onClick={() =>
+                        lastSaleRow &&
+                        printRetailSaleSlip(lastSaleRow)
+                      }
+                      disabled={!lastSaleRow}
+                    >
+                      {tUi("retailPrint")}
+                    </button>
+                  );
+                })()}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 販売履歴 */}
+        <div className="mt-6">
+          <h3 className="text-base font-bold">
+            {tUi("retailHistoryTitle")}
+          </h3>
+
+          {retailSalesError && (
+            <div className="mt-2 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {retailSalesError}
+            </div>
+          )}
+
+          {retailSales.length === 0 ? (
+            <p className="py-6 text-center text-sm text-stone-500">
+              {retailSalesLoading
+                ? tUi("retailLoading")
+                : tUi("retailHistoryEmpty")}
+            </p>
+          ) : (
+            <div className="mt-2 space-y-2">
+              {retailSales.map((sale) => {
+                const isCancelled = sale.status === "CANCELLED";
+                const isExpanded =
+                  retailExpandedSaleId === sale.id;
+                const isCancelling =
+                  retailCancellingSaleId === sale.id;
+
+                return (
+                  <div
+                    key={sale.id}
+                    className={
+                      "rounded-xl border p-3 " +
+                      (isCancelled
+                        ? "border-red-200 bg-red-50/40"
+                        : "border-stone-200 bg-white")
+                    }
+                  >
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                      <div className="min-w-[88px] text-sm">
+                        {formatRetailSaleDate(sale.sale_date)}
+                      </div>
+                      <div
+                        className={
+                          "min-w-[150px] font-mono text-sm font-bold " +
+                          (isCancelled
+                            ? "text-stone-400 line-through"
+                            : "")
+                        }
+                      >
+                        {sale.sale_number}
+                      </div>
+                      <div className="min-w-0 flex-1 truncate text-sm">
+                        {(sale.customer_name || "").trim() ||
+                          RETAIL_WALK_IN_CUSTOMER_LABEL}
+                      </div>
+                      <div className="text-sm">
+                        {tUi("retailBottlesCount", {
+                          qty: sale.total_bottles,
+                        })}
+                      </div>
+                      <div className="min-w-[80px] text-right text-sm font-bold">
+                        {formatRetailEuro(sale.total_ttc)}
+                      </div>
+                      <span
+                        className={
+                          "rounded-full px-2 py-0.5 text-[11px] font-bold " +
+                          (isCancelled
+                            ? "bg-red-100 text-red-700"
+                            : "bg-emerald-100 text-emerald-700")
+                        }
+                      >
+                        {isCancelled
+                          ? tUi("retailStatusCancelled")
+                          : tUi("retailStatusConfirmed")}
+                      </span>
+
+                      <div className="flex w-full gap-2 sm:ml-auto sm:w-auto">
+                        <button
+                          type="button"
+                          className="btn btn-secondary min-h-11 flex-1 sm:flex-none"
+                          onClick={() =>
+                            setRetailExpandedSaleId(
+                              isExpanded ? null : sale.id
+                            )
+                          }
+                          aria-expanded={isExpanded}
+                        >
+                          {isExpanded
+                            ? tUi("retailHideDetails")
+                            : tUi("retailShowDetails")}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary min-h-11 flex-1 sm:flex-none"
+                          onClick={() =>
+                            printRetailSaleSlip(sale)
+                          }
+                        >
+                          {tUi("retailPrint")}
+                        </button>
+                        {isOwnerRole && !isCancelled && (
+                          <button
+                            type="button"
+                            className="btn btn-secondary min-h-11 flex-1 text-red-700 sm:flex-none"
+                            onClick={() =>
+                              cancelRetailSale(sale)
+                            }
+                            disabled={Boolean(
+                              retailCancellingSaleId
+                            )}
+                          >
+                            {isCancelling
+                              ? tUi("retailCancelling")
+                              : tUi("retailCancelButton")}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="mt-3 overflow-x-auto">
+                        {isCancelled && (
+                          <div className="mb-2 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700">
+                            {tUi("retailCancelledInfo", {
+                              date: sale.cancelled_at
+                                ? new Date(
+                                    sale.cancelled_at
+                                  ).toLocaleString("fr-FR", {
+                                    timeZone: "Europe/Paris",
+                                  })
+                                : "—",
+                              reason:
+                                sale.cancel_reason || "—",
+                            })}
+                          </div>
+                        )}
+
+                        <table className="w-full min-w-[560px]">
+                          <thead>
+                            <tr>
+                              <th className="text-right">
+                                {tUi("retailColQty")}
+                              </th>
+                              <th>{tUi("retailColWine")}</th>
+                              <th>{tUi("retailColVintage")}</th>
+                              <th className="text-right">
+                                {tUi("retailColUnitPriceTtc")}
+                              </th>
+                              <th className="text-right">
+                                {tUi("retailColLineTotalTtc")}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {sale.items.map((item) => (
+                              <tr key={item.id}>
+                                <td className="text-right">
+                                  {item.quantity}
+                                </td>
+                                <td>
+                                  <div className="font-bold">
+                                    {item.producer_snapshot || "—"}
+                                  </div>
+                                  <div>
+                                    {item.wine_name_snapshot ||
+                                      item.cuvee_snapshot ||
+                                      "—"}
+                                    {item.bottle_size_cl_snapshot &&
+                                    item.bottle_size_cl_snapshot !==
+                                      75
+                                      ? ` (${item.bottle_size_cl_snapshot} cl)`
+                                      : ""}
+                                  </div>
+                                  {item.price_source === "MANUAL" && (
+                                    <span className="rounded bg-amber-100 px-1 text-[10px] text-amber-800">
+                                      {tUi("retailManualPriceBadge")}
+                                    </span>
+                                  )}
+                                </td>
+                                <td>
+                                  {item.vintage_snapshot || "—"}
+                                </td>
+                                <td className="text-right">
+                                  {formatRetailEuro(
+                                    item.unit_price_ttc
+                                  )}
+                                </td>
+                                <td className="text-right">
+                                  {formatRetailEuro(
+                                    item.line_total_ttc
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+
+                        <div className="ml-auto mt-2 w-full max-w-xs text-sm">
+                          <div className="flex justify-between py-0.5">
+                            <span>{tUi("retailTotalHt")}</span>
+                            <span>
+                              {formatRetailEuro(sale.total_ht)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between py-0.5">
+                            <span>
+                              {tUi("retailTotalVat", {
+                                rate: Array.from(
+                                  new Set(
+                                    sale.items.map((item) =>
+                                      item.vat_rate_percent.toFixed(2)
+                                    )
+                                  )
+                                ).join(" / ") || "—",
+                              })}
+                            </span>
+                            <span>
+                              {formatRetailEuro(sale.total_vat)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between border-t border-stone-300 pt-1 font-bold">
+                            <span>{tUi("retailTotalTtc")}</span>
+                            <span>
+                              {formatRetailEuro(sale.total_ttc)}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-xs text-stone-500">
+                            {tUi("retailPaymentLabel")}:{" "}
+                            {retailPaymentMethodLabel(
+                              sale.payment_method
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {retailSalesHasMore && (
+            <div className="mt-3 text-center">
+              <button
+                type="button"
+                className="btn btn-secondary min-h-11"
+                onClick={() => loadRetailSales(false)}
+                disabled={retailSalesLoading}
+              >
+                {retailSalesLoading
+                  ? tUi("retailLoading")
+                  : tUi("retailHistoryLoadMore")}
+              </button>
+            </div>
           )}
         </div>
       </section>
