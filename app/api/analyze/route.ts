@@ -20,19 +20,28 @@ const Item = z.object({
   notes: z.string().default("")
 });
 
-const Extraction = z.object({
-  supplier: z.string().default("UNKNOWN SUPPLIER"),
-  customer: z.string().default("BON PINARD SAS"),
-  invoice_no: z.string().default(""),
-  invoice_date: z.string().default(""),
-  currency: z.string().default("EUR"),
-  items: z.array(Item).default([]),
-  shipping_ht: z.number().default(0),
-  total_ht: z.number().default(0),
-  tva: z.number().default(0),
-  total_ttc: z.number().default(0),
-  warnings: z.array(z.string()).default([])
-});
+/*
+ * customerのdefault値は、呼び出し元(顧客company)ごとに動的に
+ * 決まるため、固定constではなく関数化する
+ * （呼び出し側companyNameが未指定の場合のみ"BON PINARD SAS"へ
+ * fallbackする。既存の後方互換のためのfallbackであり、
+ * 通常経路は常にclientから実際のcompany名が渡される）。
+ */
+function buildExtraction(defaultCustomer: string) {
+  return z.object({
+    supplier: z.string().default("UNKNOWN SUPPLIER"),
+    customer: z.string().default(defaultCustomer),
+    invoice_no: z.string().default(""),
+    invoice_date: z.string().default(""),
+    currency: z.string().default("EUR"),
+    items: z.array(Item).default([]),
+    shipping_ht: z.number().default(0),
+    total_ht: z.number().default(0),
+    tva: z.number().default(0),
+    total_ttc: z.number().default(0),
+    warnings: z.array(z.string()).default([])
+  });
+}
 
 async function fileToDataUrl(file: File) {
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -53,16 +62,32 @@ export async function POST(req: NextRequest) {
     const files = form.getAll("files").filter((f): f is File => f instanceof File);
     if (!files.length) return NextResponse.json({ error: "No files uploaded." }, { status: 400 });
 
+    /*
+     * マルチテナント対応：呼び出し元(顧客company)の名前をclientから
+     * 受け取り、プロンプト内の「自社(customer)」をそのcompanyに
+     * 差し替える。未指定・空文字の場合のみ既存の"BON PINARD SAS"へ
+     * fallbackする（後方互換のためだけで、通常経路では常にclientが
+     * ログイン中companyの名前を渡す）。
+     * company名はプロンプトへ埋め込む文字列のため、二重引用符だけ
+     * 除去してJSON例が壊れないようにする。
+     */
+    const rawCompanyName = form.get("companyName");
+    const companyName =
+      (typeof rawCompanyName === "string"
+        ? rawCompanyName.trim().replace(/"/g, "")
+        : "") || "BON PINARD SAS";
+
     const client = new OpenAI({ apiKey });
+    const Extraction = buildExtraction(companyName);
     const content: any[] = [{
       type: "input_text",
-      text: `You are a wine inventory extraction assistant for BON PINARD SAS.
+      text: `You are a wine inventory extraction assistant for ${companyName}.
 Return JSON only.
 Business rules:
-- BON PINARD / BON PINARD SAS is always the customer / our company. Never set it as supplier.
+- ${companyName} is always the customer / our company. Never set it as supplier.
 - Do not hard-code supplier. MAGNUM is only one possible supplier.
 - Detect supplier from invoice issuer, seller, vendor, domain, negociant, company header, VAT, address, RCS or SIRET.
-- If customer is BON PINARD SAS, supplier must not be the same company.
+- If customer is ${companyName}, supplier must not be the same company.
 - If supplier is uncertain, set supplier to "UNKNOWN SUPPLIER" and add a warning.
 - Do not add shipping/Port/delivery fees as inventory items. Put them in shipping_ht.
 - Keep producer and supplier separate.
@@ -72,7 +97,7 @@ Business rules:
 - If credit note/avoir/return, quantity should be negative.
 - Do not merge repeated rows. Return each line item separately.
 JSON shape:
-{"supplier":"","customer":"BON PINARD SAS","invoice_no":"","invoice_date":"","currency":"EUR","items":[{"producer":"","cuvee_or_appellation":"","wine_name_raw":"","color":"Red | White | Rose | Sparkling | unknown","vintage":"","bottle_size_cl":75,"alcohol_percent":"","quantity_bottles":0,"unit_price_ht":0,"amount_ht":0,"confidence":0,"notes":""}],"shipping_ht":0,"total_ht":0,"tva":0,"total_ttc":0,"warnings":[]}`
+{"supplier":"","customer":"${companyName}","invoice_no":"","invoice_date":"","currency":"EUR","items":[{"producer":"","cuvee_or_appellation":"","wine_name_raw":"","color":"Red | White | Rose | Sparkling | unknown","vintage":"","bottle_size_cl":75,"alcohol_percent":"","quantity_bottles":0,"unit_price_ht":0,"amount_ht":0,"confidence":0,"notes":""}],"shipping_ht":0,"total_ht":0,"tva":0,"total_ttc":0,"warnings":[]}`
     }];
 
     for (const file of files) {
